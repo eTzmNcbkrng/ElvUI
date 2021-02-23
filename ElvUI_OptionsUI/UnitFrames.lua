@@ -553,9 +553,21 @@ local function GetOptionsTable_Auras(auraType, updateFunc, groupName, numUnits)
 							["CENTER"] = "CENTER",
 							["TOPLEFT"] = "TOPLEFT",
 							["BOTTOMLEFT"] = "BOTTOMLEFT",
-							["TOPRIGHT"] = "TOPRIGHT"
+							["TOPRIGHT"] = "TOPRIGHT",
 						}
-					}
+					},
+					durationXOffset = {
+						order = 3,
+						type = "range",
+						name = "Offset X",
+						min = -300, max = 300, step = 1
+					},
+					durationYOffset = {
+						order = 4,
+						type = "range",
+						name = "Offset Y",
+						min = -300, max = 300, step = 1
+					},
 				}
 			},
 			filters = {
@@ -1526,7 +1538,21 @@ local function GetOptionsTable_Castbar(hasTicks, updateFunc, groupName, numUnits
 						min = 2, max = 128, step = 1
 					}
 				}
-			}
+			},
+			barOffsetX = {
+				order = 15,
+				type = "range",
+				name = "OffsetX",
+				desc = "OffsetX relative to parent",
+				min =-300, max = 300, step = 1
+			},
+			barOffsetY = {
+				order = 16,
+				type = "range",
+				name = "OffsetY",
+				desc = "OffsetY relative to parent",
+				min =-300, max = 300, step = 1
+			},
 		}
 	}
 
@@ -3449,7 +3475,7 @@ E.Options.args.unitframe = {
 							}
 						},
 						debuffHighlight = {
-							order = 9,
+							order = 10,
 							type = "group",
 							name = L["Debuff Highlighting"],
 							get = function(info)

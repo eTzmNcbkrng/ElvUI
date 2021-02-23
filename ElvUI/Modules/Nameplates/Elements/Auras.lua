@@ -219,11 +219,11 @@ function NP:Update_AurasPosition(frame, db)
 		end
 
 		if db.reverseCooldown then
-			button:SetStatusBarColor(0, 0, 0, 0.5)
+			button:SetStatusBarColor(0, 0, 0, 0) -- 0.5
 			button.bg:SetTexture(0, 0, 0, 0)
 		else
 			button:SetStatusBarColor(0, 0, 0, 0)
-			button.bg:SetTexture(0, 0, 0, 0.5)
+			button.bg:SetTexture(0, 0, 0, 0) -- 0.5
 		end
 	end
 end
@@ -340,7 +340,7 @@ function NP:Construct_AuraIcon(parent, index)
 	button:SetOrientation("VERTICAL")
 
 	button.bg = button:CreateTexture()
-	button.bg:SetTexture(0, 0, 0, 0.5)
+	button.bg:SetTexture(0, 0, 0, 0) -- alpaha 0.5
 
 	button.bg:SetPoint("TOPLEFT", button)
 	button.bg:SetPoint("BOTTOMRIGHT", button:GetStatusBarTexture(), "TOPRIGHT")

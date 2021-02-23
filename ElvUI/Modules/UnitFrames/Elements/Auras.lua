@@ -124,11 +124,18 @@ end
 function UF:UpdateAuraCooldownPosition(button)
 	button.cd.timer.text:ClearAllPoints()
 	local point = (button.db and button.db.durationPosition) or "CENTER"
-	if point == "CENTER" then
-		button.cd.timer.text:Point(point, 1, 0)
+	local offsetX = (button.db and button.db.durationXOffset) or 0
+	local offsetY = (button.db and button.db.durationYOffset) or 0
+
+	if( offsetX ~= 0 and offsetY ~= 0 ) then
+		button.cd.timer.text:SetPoint(point, offsetX, offsetY)
 	else
-		local bottom, right = find(point, "BOTTOM"), find(point, "RIGHT")
-		button.cd.timer.text:Point(point, right and -1 or 1, bottom and 1 or -1)
+		if point == "CENTER" then
+			button.cd.timer.text:Point(point, 1, 0)
+		else
+			local bottom, right = find(point, "BOTTOM"), find(point, "RIGHT")
+			button.cd.timer.text:Point(point, right and -1 or 1, bottom and 1 or -1)
+		end
 	end
 
 	button.needsUpdateCooldownPosition = nil

@@ -199,7 +199,7 @@ function UF:Configure_Castbar(frame)
 
 			castbar:ClearAllPoints()
 			if frame.ORIENTATION ~= "RIGHT" then
-				castbar:Point("BOTTOMRIGHT", castbar.Holder, "BOTTOMRIGHT", -(frame.BORDER+frame.SPACING), frame.BORDER+frame.SPACING)
+				castbar:Point("BOTTOMRIGHT", castbar.Holder, "BOTTOMRIGHT", -(frame.BORDER+frame.SPACING + (db.castbar.barOffsetX or 0)), frame.BORDER+frame.SPACING + (db.castbar.barOffsetY or 0))
 				if not isMoved then
 					castbar.Holder.mover:Point("TOPRIGHT", frame, "BOTTOMRIGHT", 0, -(frame.BORDER - frame.SPACING))
 				end
