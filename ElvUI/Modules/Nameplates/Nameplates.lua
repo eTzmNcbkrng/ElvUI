@@ -2,6 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 local NP = E:GetModule("NamePlates")
 --local LSM = E.Libs.LSM
 local LAI = E.Libs.LAI
+local LAM = E.Libs.LAM
 
 --Lua functions
 local _G = _G
@@ -372,6 +373,7 @@ function NP:OnShow(isConfig, dontHideHighlight)
 			NP:Configure_CastBar(frame, true)
 		end
 
+		NP:Configure_AbsorbBar(frame)
 		NP:Configure_Glow(frame)
 		NP:Configure_Elite(frame)
 		NP:Configure_Highlight(frame)
@@ -581,6 +583,7 @@ function NP:OnCreated(frame)
 	unitFrame.Health = self:Construct_HealthBar(unitFrame)
 	unitFrame.Health.Highlight = self:Construct_Highlight(unitFrame)
 	unitFrame.CutawayHealth = self:ConstructElement_CutawayHealth(unitFrame)
+	unitFrame.AbsorbBar = self:ConstructElement_AbsorbBar(unitFrame)
 	unitFrame.Level = self:Construct_Level(unitFrame)
 	unitFrame.Name = self:Construct_Name(unitFrame)
 	unitFrame.CastBar = self:Construct_CastBar(unitFrame)
@@ -1240,6 +1243,12 @@ function NP:Initialize()
 	LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED_DOSE")
 	LAI.RegisterCallback(self, "LibAuraInfo_AURA_CLEAR")
 	LAI.RegisterCallback(self, "LibAuraInfo_UNIT_AURA")
+
+	LAM.UnregisterAllCallbacks(self);
+	LAM.RegisterCallback(self, "EffectApplied");
+	LAM.RegisterCallback(self, "EffectUpdated");
+	LAM.RegisterCallback(self, "EffectRemoved");
+
 end
 
 local function InitializeCallback()

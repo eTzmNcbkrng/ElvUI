@@ -147,8 +147,8 @@ function NP:SetAura(frame, guid, index, filter, isDebuff, visible)
 					button:SetValue(timeLeft)
 
 					button:SetScript("OnUpdate", NP.UpdateTime)
---				else
---					return HIDDEN
+	--				else
+	--					return HIDDEN
 				end
 			else
 				button.timeLeft = nil

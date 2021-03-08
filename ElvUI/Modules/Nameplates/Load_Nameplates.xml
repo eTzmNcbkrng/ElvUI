@@ -6,6 +6,7 @@
 	<Script file="Elements\ComboPoints.lua"/>
 	<Script file="Elements\Glow.lua"/>
 	<Script file="Elements\HealthBar.lua"/>
+	<Script file="Elements\AbsorbBar.lua"/>
 	<Script file="Elements\CutawayHealth.lua"/>
 	<Script file="Elements\Level.lua"/>
 	<Script file="Elements\Name.lua"/>
