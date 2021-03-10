@@ -113,6 +113,7 @@ function NP:SetPlateFrameLevel(frame, level, isTarget)
 		frame.Shadow:SetFrameLevel(frame:GetFrameLevel()-1)
 		frame.Buffs:SetFrameLevel(level+1)
 		frame.Debuffs:SetFrameLevel(level+1)
+		frame.DebuffsBig:SetFrameLevel(level+1)
 	end
 end
 
@@ -367,6 +368,7 @@ function NP:OnShow(isConfig, dontHideHighlight)
 
 		NP:Configure_Auras(frame, "Buffs")
 		NP:Configure_Auras(frame, "Debuffs")
+		NP:Configure_Auras(frame, "DebuffsBig")
 
 		if NP.db.units[unitType].health.enable or NP.db.alwaysShowTargetHealth then
 			NP:Configure_HealthBar(frame, true)
@@ -406,6 +408,12 @@ function NP:OnHide(isConfig, dontHideHighlight)
 	frame.unit = nil
 	frame.isGroupUnit = nil
 
+	frame.AbsorbBar.overAbsorbGlow:Hide()
+	frame.AbsorbBar.totalAbsorb:SetWidth(0)
+	frame.AbsorbBar.totalAbsorb:Hide()
+	frame.AbsorbBar.totalAbsorbOverlay:SetWidth(0)
+	frame.AbsorbBar.totalAbsorbOverlay:Hide()
+
 	for i = 1, #frame.Buffs do
 		frame.Buffs[i]:SetScript("OnUpdate", nil)
 		frame.Buffs[i].timeLeft = nil
@@ -418,9 +426,16 @@ function NP:OnHide(isConfig, dontHideHighlight)
 		frame.Debuffs[i]:Hide()
 	end
 
+	for i = 1, #frame.DebuffsBig do
+		frame.DebuffsBig[i]:SetScript("OnUpdate", nil)
+		frame.DebuffsBig[i].timeLeft = nil
+		frame.DebuffsBig[i]:Hide()
+	end
+
 	if isConfig then
 		frame.Buffs.anchoredIcons = 0
 		frame.Debuffs.anchoredIcons = 0
+		frame.DebuffsBig.anchoredIcons = 0
 	end
 
 	NP:StyleFilterClear(frame)
@@ -590,6 +605,7 @@ function NP:OnCreated(frame)
 	unitFrame.Elite = self:Construct_Elite(unitFrame)
 	unitFrame.Buffs = self:ConstructElement_Auras(unitFrame, "Buffs")
 	unitFrame.Debuffs = self:ConstructElement_Auras(unitFrame, "Debuffs")
+	unitFrame.DebuffsBig = self:ConstructElement_Auras(unitFrame, "DebuffsBig")
 	unitFrame.HealerIcon = self:Construct_HealerIcon(unitFrame)
 	unitFrame.CPoints = self:Construct_CPoints(unitFrame)
 	unitFrame.IconFrame = self:Construct_IconFrame(unitFrame)
@@ -1155,6 +1171,7 @@ function NP:TogleTestFrame(unitType)
 		unitFrame.oldLevel:SetText(E.mylevel)
 		unitFrame.Buffs.forceShow = true
 		unitFrame.Debuffs.forceShow = true
+		unitFrame.DebuffsBig.forceShow = true
 		unitFrame.RaidIcon:SetTexture([[Interface\TargetingFrame\UI-RaidTargetingIcons]])
 		SetRaidTargetIconTexture(unitFrame.RaidIcon, random(1, 8))
 		unitFrame.RaidIcon:Show()
