@@ -26,6 +26,19 @@ function UF:Construct_TargetFrame(frame)
 	frame.Castbar.LatencyTexture:Hide()
 	frame.RaidTargetIndicator = self:Construct_RaidIcon(frame)
 
+	--
+	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
+    frame.AbsorbBar:SetScript("OnEvent", function(self, event, ...)
+		if event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_AURA" or event == "PLAYER_TARGET_CHANGED" then
+            UF:Update_AbsorbBar(frame)
+			--print(frame)
+		end
+	end)
+	frame.AbsorbBar:RegisterEvent("UNIT_HEALTH_FREQUENT")
+	frame.AbsorbBar:RegisterEvent("UNIT_AURA")
+	frame.AbsorbBar:RegisterEvent("PLAYER_TARGET_CHANGED")
+	--
+
 	frame.ComboPointsHolder = CreateFrame("Frame", nil, frame)
 	frame.ComboPointsHolder:Point("BOTTOM", E.UIParent, "BOTTOM", 0, 200)
 	frame.ComboPoints = self:Construct_Combobar(frame)
@@ -105,6 +118,9 @@ function UF:Update_TargetFrame(frame, db)
 
 	--Health
 	UF:Configure_HealthBar(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame)
 
 	--Name
 	UF:UpdateNameSettings(frame)

@@ -1,6 +1,7 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule("UnitFrames")
 local LSM = E.Libs.LSM
+local LAM = E.Libs.LAM
 UF.LSM = E.Libs.LSM
 
 --Lua functions
@@ -701,7 +702,7 @@ function UF.groupPrototype:Update(frame)
 end
 
 function UF.groupPrototype:AdjustVisibility(frame)
---	if not frame.isForced then
+	--	if not frame.isForced then
 		local numGroups = frame.numGroups
 		for i = 1, #frame.groups do
 			local group = frame.groups[i]
@@ -717,7 +718,7 @@ function UF.groupPrototype:AdjustVisibility(frame)
 				end
 			end
 		end
---	end
+	--	end
 end
 
 function UF.headerPrototype:ClearChildPoints()
@@ -1405,9 +1406,18 @@ function UF:Initialize()
 		ORD.MatchBySpellName = true
 	end
 
+    --[[ LAM.UnregisterAllCallbacks(self);
+	LAM.RegisterCallback(self, "EffectApplied");
+	LAM.RegisterCallback(self, "EffectUpdated");
+	LAM.RegisterCallback(self, "EffectRemoved"); ]]
+
 	self:UpdateRangeCheckSpells()
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB", "UpdateRangeCheckSpells")
 end
+
+------------------------------------------
+
+------------------------------------------
 
 local function InitializeCallback()
 	UF:Initialize()

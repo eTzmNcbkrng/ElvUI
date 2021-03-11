@@ -26,6 +26,16 @@ function UF:Construct_PlayerFrame(frame)
 	frame.Buffs = self:Construct_Buffs(frame)
 	frame.Debuffs = self:Construct_Debuffs(frame)
 	frame.Castbar = self:Construct_Castbar(frame, L["Player Castbar"])
+	--
+	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
+    frame.AbsorbBar:SetScript("OnEvent", function(self, event, ...)
+		if event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_AURA" then
+            UF:Update_AbsorbBar(frame)
+		end
+	end)
+	frame.AbsorbBar:RegisterEvent("UNIT_HEALTH_FREQUENT")
+	frame.AbsorbBar:RegisterEvent("UNIT_AURA")
+	--
 
 	--Create a holder frame all "classbars" can be positioned into
 	if CAN_HAVE_CLASSBAR then
@@ -127,6 +137,9 @@ function UF:Update_PlayerFrame(frame, db)
 
 	--Health
 	UF:Configure_HealthBar(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame)
 
 	--Name
 	UF:UpdateNameSettings(frame)

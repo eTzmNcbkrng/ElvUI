@@ -45,6 +45,18 @@ function UF:Construct_PartyFrames()
 		self.Power = UF:Construct_PowerBar(self, true, true, "LEFT")
 		self.Power.frequentUpdates = false
 
+		--
+		local _self = self
+		self.AbsorbBar = UF:Construct_AbsorbBar(self)
+		self.AbsorbBar:SetScript("OnEvent", function(_, event, unit)
+			if event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_AURA" then
+				UF:Update_AbsorbBar(_self, unit)
+			end
+		end)
+		self.AbsorbBar:RegisterEvent("UNIT_HEALTH_FREQUENT")
+		self.AbsorbBar:RegisterEvent("UNIT_AURA")
+		--
+
 		self.Portrait3D = UF:Construct_Portrait(self, "model")
 		self.Portrait2D = UF:Construct_Portrait(self, "texture")
 		self.InfoPanel = UF:Construct_InfoPanel(self)
@@ -240,6 +252,9 @@ function UF:Update_PartyFrames(frame, db)
 
 		UF:Configure_InfoPanel(frame)
 		UF:Configure_HealthBar(frame)
+
+		--Absorb
+		UF:Configure_AbsorbBar(frame)
 
 		UF:UpdateNameSettings(frame)
 
