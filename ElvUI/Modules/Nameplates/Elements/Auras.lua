@@ -21,6 +21,7 @@ local positionValues = {
 	BOTTOMLEFT = "TOP",
 	BOTTOMRIGHT = "TOP",
 	LEFT = "RIGHT",
+	CENTER = "CENTER",
 	RIGHT = "LEFT",
 	TOPLEFT = "BOTTOM",
 	TOPRIGHT = "BOTTOM"
@@ -30,6 +31,7 @@ local positionValues2 = {
 	BOTTOMLEFT = "BOTTOM",
 	BOTTOMRIGHT = "BOTTOM",
 	LEFT = "LEFT",
+	CENTER = "CENTER",
 	RIGHT = "RIGHT",
 	TOPLEFT = "TOP",
 	TOPRIGHT = "TOP"
@@ -127,6 +129,11 @@ function NP:UpdateElement_Auras(frame)
 
 			buffs.anchoredIcons = #buffs
 		end
+		-- Grow frame as new icon update to keep them centered
+		if db.anchorPoint == "CENTER" then
+			if buffs.visibleDebuffs == 0 then buffs.visibleBuffs = 1 end
+			buffs:SetWidth(buffs.visibleBuffs * (db.size + db.spacing))
+		end
 	end
 
 	-- debuffs
@@ -140,18 +147,29 @@ function NP:UpdateElement_Auras(frame)
 
 			debuffs.anchoredIcons = #debuffs
 		end
+		-- Grow frame as new icon update to keep them centered
+		if db.anchorPoint == "CENTER" then
+			if debuffs.visibleDebuffs == 0 then debuffs.visibleDebuffs = 1 end
+			debuffs:SetWidth(debuffs.visibleDebuffs * (db.size + db.spacing))
+		end
+
 	end
 
 	-- debuffsBig
 	db = NP.db.units[frame.UnitType].debuffsBig
 	if db.enable then
-		local debuffs = frame.DebuffsBig
-		debuffs.visibleDebuffs = NP:UpdateElement_AuraIcons(debuffs, guid, debuffs.filter or "HARMFUL", db.perrow * db.numrows, true)
+		local debuffsBig = frame.DebuffsBig
+		debuffsBig.visibleDebuffs = NP:UpdateElement_AuraIcons(debuffsBig, guid, debuffsBig.filter or "HARMFUL", db.perrow * db.numrows, true)
 
-		if #debuffs > debuffs.anchoredIcons then
-			self:Update_AurasPosition(debuffs, db)
+		if #debuffsBig > debuffsBig.anchoredIcons then
+			self:Update_AurasPosition(debuffsBig, db)
 
-			debuffs.anchoredIcons = #debuffs
+			debuffsBig.anchoredIcons = #debuffsBig
+		end
+		-- Grow frame as new icon update to keep them centered
+		if db.anchorPoint == "CENTER" then
+			if debuffsBig.visibleDebuffs == 0 then debuffsBig.visibleDebuffs = 1 end
+			debuffsBig:SetWidth(debuffsBig.visibleDebuffs * (db.size + db.spacing))
 		end
 	end
 
@@ -185,12 +203,13 @@ function NP:UpdateElement_AuraIcons(frame, guid, filter, limit, isDebuff)
 	end
 	return visible
 end
-function NP:Update_AurasPosition(frame, db)
+function NP:Update_AurasPosition(frame, db, parentFrame)
 	local size = db.size + db.spacing
-	local anchor = E.InversePoints[db.anchorPoint]
+	local anchor = E.InversePoints[db.iconAnchorPoint]
 	local growthx = (db.growthX == "LEFT" and -1) or 1
 	local growthy = (db.growthY == "DOWN" and -1) or 1
 	local cols = db.perrow
+
 
 	for i = frame.anchoredIcons + 1, #frame do
 		local button = frame[i]
@@ -468,8 +487,9 @@ function NP:ConstructElement_Auras(frame, auraType)
 	auras:SetSize(150, 27)
 	auras:SetPoint("TOP", 0, 22)
 	auras.anchoredIcons = 0
+
 	if(auraType == "DebuffsBig") then
-		auras.type = "debuffsBig" -- lowercase make 'B' lower and bug
+		auras.type = "debuffsBig" -- string.lower make 'B' lower and bug out
 	else
 		auras.type = string.lower(auraType)
 	end

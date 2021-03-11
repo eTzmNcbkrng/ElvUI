@@ -15,7 +15,8 @@ local positionValues = {
 	LEFT = "LEFT",
 	RIGHT = "RIGHT",
 	TOPLEFT = "TOPLEFT",
-	TOPRIGHT = "TOPRIGHT"
+	TOPRIGHT = "TOPRIGHT",
+	CENTER = "CENTER"
 }
 
 local raidTargetIcon = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_%s:0|t %s"
@@ -2301,6 +2302,13 @@ local function GetUnitSettings(unit, name)
 						desc = L["What point to anchor to the frame you set to attach to."],
 						values = positionValues
 					},
+					iconAnchorPoint = {
+						order = 8,
+						type = "select",
+						name = L["Icon Anchor Point"],
+						desc = L["What point to anchor Icon to the frame you set to attach to."],
+						values = positionValues
+					},
 					attachTo = {
 						order = 9,
 						type = "select",
@@ -2675,6 +2683,13 @@ local function GetUnitSettings(unit, name)
 						type = "select",
 						name = L["Anchor Point"],
 						desc = L["What point to anchor to the frame you set to attach to."],
+						values = positionValues
+					},
+					iconAnchorPoint = {
+						order = 8,
+						type = "select",
+						name = L["Icon Anchor Point"],
+						desc = L["What point to anchor Icon to the frame you set to attach to."],
 						values = positionValues
 					},
 					attachTo = {
@@ -3052,6 +3067,13 @@ local function GetUnitSettings(unit, name)
 						type = "select",
 						name = L["Anchor Point"],
 						desc = L["What point to anchor to the frame you set to attach to."],
+						values = positionValues
+					},
+					iconAnchorPoint = {
+						order = 8,
+						type = "select",
+						name = L["Icon Anchor Point"],
+						desc = L["What point to anchor Icon to the frame you set to attach to."],
 						values = positionValues
 					},
 					attachTo = {
