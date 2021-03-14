@@ -4410,8 +4410,29 @@ E.Options.args.nameplate = {
 						["style8"] = L["Background Glow"].." + "..L["Side Arrows"]
 					}
 				},
-				alwaysShowTargetHealth = {
+				arrowSize = {
+					order = 6,
+					type = 'range',
+					name = L["Arrow Size"],
+					min = 1,
+					max = 50,
+					step = 1,
+					isPercent = false
+				},
+				arrowXOffset = {
 					order = 7,
+					type = "range",
+					name = L["Arrow X-Offset"],
+					min = -20, max = 20, step = 1
+				},
+				arrowYOffset = {
+					order = 8,
+					type = "range",
+					name = L["Arrow Y-Offset"],
+					min = -20, max = 20, step = 1
+				},
+				alwaysShowTargetHealth = {
+					order = 9,
 					type = "toggle",
 					name = L["Always Show Target Health"],
 					get = function(info) return E.db.nameplates.alwaysShowTargetHealth end,
@@ -4422,7 +4443,7 @@ E.Options.args.nameplate = {
 					customWidth = 200
 				},
 				comboPointsGroup = {
-					order = 8,
+					order = 10,
 					type = "group",
 					name = L["COMBO_POINTS"],
 					guiInline = true,
@@ -4475,6 +4496,20 @@ E.Options.args.nameplate = {
 							disabled = function() return not E.db.nameplates.units.TARGET.comboPoints.enable end
 						}
 					}
+				},
+				arrows = {
+					order = 11,
+					name = L["Arrow Texture"],
+					type = 'multiselect',
+					customWidth = 80,
+					get = function(info, key)
+						return E.db.nameplates.units.TARGET.arrow == key
+					end,
+					set = function(info, key, value)
+						E.db.nameplates.units.TARGET.arrow = key
+						NP:UpdateCVars()
+						NP:ConfigureAll()
+					end,
 				}
 			}
 		},
@@ -4548,6 +4583,15 @@ E.Options.args.nameplate = {
 		}
 	}
 }
+
+do -- target arrow textures
+	local arrows = {}
+	E.Options.args.nameplate.args.targetGroup.args.arrows.values = arrows
+
+	for key, arrow in pairs(E.Media.Arrows) do
+		arrows[key] = E:TextureString(arrow, ':45:45')
+	end
+end
 
 for i = 1, 5 do
 	E.Options.args.nameplate.args.generalGroup.args.colorsGroup.args.comboPoints.args["COMBO_POINTS" .. i] = {

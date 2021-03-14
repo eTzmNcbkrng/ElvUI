@@ -131,12 +131,22 @@ function NP:Configure_Glow(frame)
 
 	if glowStyle ~= "none" then
 		local color = self.db.colors.glowColor
+		local arrowSize = NP.db.units.TARGET.arrowSize
+		local arrowXOffset, arrowYOffset = NP.db.units.TARGET.arrowXOffset, NP.db.units.TARGET.arrowYOffset
 		local r, g, b, a = color.r, color.g, color.b, color.a
 
 		-- Indicators
+		frame.LeftIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
 		frame.LeftIndicator:SetVertexColor(r, g, b)
+		frame.LeftIndicator:SetSize(arrowSize, arrowSize)
+
+		frame.RightIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
 		frame.RightIndicator:SetVertexColor(r, g, b)
+		frame.RightIndicator:SetSize(arrowSize, arrowSize)
+
+		frame.TopIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
 		frame.TopIndicator:SetVertexColor(r, g, b)
+		frame.TopIndicator:SetSize(arrowSize, arrowSize)
 
 		frame.TopIndicator:ClearAllPoints()
 		frame.LeftIndicator:ClearAllPoints()
@@ -144,25 +154,25 @@ function NP:Configure_Glow(frame)
 
 		if glowStyle == "style3" or glowStyle == "style5" or glowStyle == "style6" then
 			if frame.IconOnlyChanged then
-				frame.TopIndicator:SetPoint("BOTTOM", frame.IconFrame, "TOP", -1, 6)
+				frame.TopIndicator:SetPoint("BOTTOM", frame.IconFrame, "TOP", arrowXOffset, arrowYOffset)
 			else
 				if healthIsShown then
-					frame.TopIndicator:SetPoint("BOTTOM", frame.Health, "TOP", 0, 6)
+					frame.TopIndicator:SetPoint("BOTTOM", frame.Health, "TOP", arrowXOffset, arrowYOffset)
 				else
-					frame.TopIndicator:SetPoint("BOTTOM", frame.Name, "TOP", 0, 8)
+					frame.TopIndicator:SetPoint("BOTTOM", frame.Name, "TOP", arrowXOffset, arrowYOffset)
 				end
 			end
 		elseif glowStyle == "style4" or glowStyle == "style7" or glowStyle == "style8" then
 			if frame.IconOnlyChanged then
-				frame.LeftIndicator:SetPoint("LEFT", frame.IconFrame, "RIGHT", -3, 0)
-				frame.RightIndicator:SetPoint("RIGHT", frame.IconFrame, "LEFT", 3, 0)
+				frame.LeftIndicator:SetPoint("LEFT", frame.IconFrame, "RIGHT", arrowXOffset, arrowYOffset)
+				frame.RightIndicator:SetPoint("RIGHT", frame.IconFrame, "LEFT", -arrowXOffset, arrowYOffset)
 			else
 				if healthIsShown then
-					frame.LeftIndicator:SetPoint("LEFT", frame.Health, "RIGHT", -3, 0)
-					frame.RightIndicator:SetPoint("RIGHT", frame.Health, "LEFT", 3, 0)
+					frame.LeftIndicator:SetPoint("LEFT", frame.Health, "RIGHT", arrowXOffset, arrowYOffset)
+					frame.RightIndicator:SetPoint("RIGHT", frame.Health, "LEFT", -arrowXOffset, arrowYOffset)
 				else
-					frame.LeftIndicator:SetPoint("LEFT", frame.Name, "RIGHT", 20, 0)
-					frame.RightIndicator:SetPoint("RIGHT", frame.Name, "LEFT", -20, 0)
+					frame.LeftIndicator:SetPoint("LEFT", frame.Name, "RIGHT", arrowXOffset, arrowYOffset)
+					frame.RightIndicator:SetPoint("RIGHT", frame.Name, "LEFT", -arrowXOffset, arrowYOffset)
 				end
 			end
 		end
@@ -203,10 +213,10 @@ function NP:Construct_Glow(frame)
 	end
 
 	frame.Spark:SetTexture(E.Media.Textures.Spark)
-	frame.TopIndicator:SetTexture(E.Media.Textures.ArrowUp)
-	frame.TopIndicator:SetRotation(3.14)
-	frame.LeftIndicator:SetTexture(E.Media.Textures.ArrowUp)
-	frame.LeftIndicator:SetRotation(1.57)
-	frame.RightIndicator:SetTexture(E.Media.Textures.ArrowUp)
-	frame.RightIndicator:SetRotation(-1.57)
+	frame.TopIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
+	frame.TopIndicator:SetTexCoord(1, 1, 1, 0, 0, 1, 0, 0) -- Rotates texture 180 degress (Up arrow to face down)
+	frame.LeftIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
+	frame.LeftIndicator:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1) -- Rotates texture 90 degrees clockwise (Up arrow to face right)
+	frame.RightIndicator:SetTexture(E.Media.Arrows[NP.db.units.TARGET.arrow])
+	frame.RightIndicator:SetTexCoord(1, 1, 0, 1, 1, 0, 0, 0) -- Flips texture horizontally (Right facing arrow to face left)
 end
