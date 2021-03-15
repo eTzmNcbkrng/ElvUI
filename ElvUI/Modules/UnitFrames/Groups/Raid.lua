@@ -22,6 +22,21 @@ function UF:Construct_RaidFrames()
 
 	self.Health = UF:Construct_HealthBar(self, true, true, "RIGHT")
 
+	--
+	self.AbsorbBar = UF:Construct_AbsorbBar(self)
+	self.AbsorbBar:SetScript("OnEvent", function(_self, event, unit)
+		if event == "UNIT_HEALTH" or event == "UNIT_AURA" then
+			--DevTools_Dump(_self)
+			local parent = _self:GetParent()
+			if parent.unit == unit then
+				UF:Update_AbsorbBar(parent, unit)
+			end
+		end
+	end)
+	self.AbsorbBar:RegisterEvent("UNIT_HEALTH")
+	self.AbsorbBar:RegisterEvent("UNIT_AURA")
+	--
+
 	self.Power = UF:Construct_PowerBar(self, true, true, "LEFT")
 	self.Power.frequentUpdates = false
 
@@ -184,6 +199,9 @@ function UF:Update_RaidFrames(frame, db)
 	UF:Configure_InfoPanel(frame)
 	--Health
 	UF:Configure_HealthBar(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame)
 
 	--Name
 	UF:UpdateNameSettings(frame)

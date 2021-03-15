@@ -46,14 +46,17 @@ function UF:Construct_PartyFrames()
 		self.Power.frequentUpdates = false
 
 		--
-		local _self = self
 		self.AbsorbBar = UF:Construct_AbsorbBar(self)
-		self.AbsorbBar:SetScript("OnEvent", function(_, event, unit)
-			if event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_AURA" then
-				UF:Update_AbsorbBar(_self, unit)
+		self.AbsorbBar:SetScript("OnEvent", function(_self, event, unit)
+			if event == "UNIT_HEALTH" or event == "UNIT_AURA" then
+				--DevTools_Dump(_self)
+				local parent = _self:GetParent()
+				if parent.unit == unit then
+					UF:Update_AbsorbBar(parent, unit)
+				end
 			end
 		end)
-		self.AbsorbBar:RegisterEvent("UNIT_HEALTH_FREQUENT")
+		self.AbsorbBar:RegisterEvent("UNIT_HEALTH")
 		self.AbsorbBar:RegisterEvent("UNIT_AURA")
 		--
 
