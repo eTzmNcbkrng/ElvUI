@@ -202,8 +202,19 @@ function UF:Configure_HealthBar(frame)
 		--health:SetFrequentUpdates(db.health.frequentUpdates)
 	end
 
+
 	--Transparency Settings
-	UF:ToggleTransparentStatusBar(UF.db.colors.transparentHealth, frame.Health, frame.Health.bg, true, nil)
+	if UF.db.colors.customhealthbackdropAlpha then
+		--Transparency backdrop only
+		UF:ToggleTransparentStatusBar(UF.db.colors.transparentHealth, frame.Health, frame.Health.bg, true, nil)
+		frame.Health.bg:SetAlpha(0) -- CUSTOM for forcing unitframe healthbar backdrop alpha
+		local _db = UF.db.colors
+		frame.Health.backdrop:SetBackdropColor(_db.custombackdropAlpha.r , _db.custombackdropAlpha.g , _db.custombackdropAlpha.b , _db.custombackdropAlpha.a ); -- CUSTOM for forcing unitframe healthbar backdrop alpha
+	else
+		--Transparency bar texture
+		frame.Health.bg:SetAlpha(1)
+		UF:ToggleTransparentStatusBar(UF.db.colors.transparentHealth, frame.Health, frame.Health.bg, true, nil)
+	end
 
 	--Prediction Texture; keep under ToggleTransparentStatusBar
 	UF:UpdatePredictionStatusBar(frame.HealthPrediction, frame.Health)

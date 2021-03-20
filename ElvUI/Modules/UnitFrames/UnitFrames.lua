@@ -1332,6 +1332,7 @@ function UF:ToggleTransparentStatusBar(isTransparent, statusBar, backdropTex, ad
 			backdropTex:SetAllPoints(statusBar)
 		end
 	end
+
 end
 
 function UF:Initialize()
@@ -1405,11 +1406,6 @@ function UF:Initialize()
 		ORD.FilterDispellableDebuff = true
 		ORD.MatchBySpellName = true
 	end
-
-    --[[ LAM.UnregisterAllCallbacks(self);
-	LAM.RegisterCallback(self, "EffectApplied");
-	LAM.RegisterCallback(self, "EffectUpdated");
-	LAM.RegisterCallback(self, "EffectRemoved"); ]]
 
 	self:UpdateRangeCheckSpells()
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB", "UpdateRangeCheckSpells")

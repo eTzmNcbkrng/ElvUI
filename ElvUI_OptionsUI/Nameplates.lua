@@ -4329,6 +4329,25 @@ E.Options.args.nameplate = {
 							disabled = function() return not E.db.nameplates.cutawayHealth end
 						}
 					}
+				},
+				absorbGroup = {
+					order = 14,
+					type = "group",
+					name = L["Absorb Bars"],
+					args = {
+						header = {
+							order = 1,
+							type = "header",
+							name = L["Absorb Bars"]
+						},
+						enabled = {
+							order = 2,
+							type = "toggle",
+							name = L["Enable"],
+							get = function(info) return E.db.nameplates.absorbBars end,
+							set = function(info, value) E.db.nameplates.absorbBars = value end,
+						},
+					}
 				}
 			}
 		},

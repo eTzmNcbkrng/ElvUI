@@ -28,12 +28,13 @@ function UF:Construct_PlayerFrame(frame)
 	frame.Castbar = self:Construct_Castbar(frame, L["Player Castbar"])
 	--
 	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
-    frame.AbsorbBar:SetScript("OnEvent", function(self, event, ...)
-		if event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_AURA" then
-            UF:Update_AbsorbBar(frame)
+	frame.AbsorbBar:SetScript("OnEvent", function(self, event, ...)
+		if event == "UNIT_AURA" then
+            if frame.db and frame.db.absorb and frame.db.absorb.enable then
+				UF:Update_AbsorbBar(frame)
+			end
 		end
 	end)
-	frame.AbsorbBar:RegisterEvent("UNIT_HEALTH_FREQUENT")
 	frame.AbsorbBar:RegisterEvent("UNIT_AURA")
 	--
 

@@ -22,6 +22,22 @@ function UF:Construct_Raid40Frames()
 
 	self.Health = UF:Construct_HealthBar(self, true, true, "RIGHT")
 
+	--
+	self.AbsorbBar = UF:Construct_AbsorbBar(self)
+	self.AbsorbBar:SetScript("OnEvent", function(_self, event, unit)
+		if event == "UNIT_AURA" then
+			--DevTools_Dump(_self)
+			local parent = _self:GetParent()
+			if parent.unit == unit then
+				if self.db and self.db.absorb and self.db.absorb.enable then
+					UF:Update_AbsorbBar(parent, unit)
+				end
+			end
+		end
+	end)
+	self.AbsorbBar:RegisterEvent("UNIT_AURA")
+	--
+
 	self.Power = UF:Construct_PowerBar(self, true, true, "LEFT")
 	self.Power.frequentUpdates = false
 
@@ -190,6 +206,9 @@ function UF:Update_Raid40Frames(frame, db)
 
 	--Name
 	UF:UpdateNameSettings(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame)
 
 	--Power
 	UF:Configure_Power(frame)

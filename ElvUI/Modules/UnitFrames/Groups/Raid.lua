@@ -25,15 +25,16 @@ function UF:Construct_RaidFrames()
 	--
 	self.AbsorbBar = UF:Construct_AbsorbBar(self)
 	self.AbsorbBar:SetScript("OnEvent", function(_self, event, unit)
-		if event == "UNIT_HEALTH" or event == "UNIT_AURA" then
+		if event == "UNIT_AURA" then
 			--DevTools_Dump(_self)
 			local parent = _self:GetParent()
 			if parent.unit == unit then
-				UF:Update_AbsorbBar(parent, unit)
+				if self.db and self.db.absorb and self.db.absorb.enable then
+					UF:Update_AbsorbBar(parent, unit)
+				end
 			end
 		end
 	end)
-	self.AbsorbBar:RegisterEvent("UNIT_HEALTH")
 	self.AbsorbBar:RegisterEvent("UNIT_AURA")
 	--
 

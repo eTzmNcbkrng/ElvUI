@@ -21,7 +21,7 @@ function UF:Construct_Cutaway(frame)
 	local cutawayHealth = frame.Health.ClipFrame:CreateTexture(frameName.."CutawayHealth")
 	cutawayHealth:SetPoint("TOPLEFT", healthTexture, "TOPRIGHT")
 	cutawayHealth:SetPoint("BOTTOMLEFT", healthTexture, "BOTTOMRIGHT")
-	cutawayHealth:SetTexture(E.media.blankTex)
+	cutawayHealth:SetTexture(healthTexture) --E.media.blankTex
 	cutaway.Health = cutawayHealth
 
 	return cutaway

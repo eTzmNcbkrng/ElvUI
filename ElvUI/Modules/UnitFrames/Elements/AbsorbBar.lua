@@ -6,33 +6,6 @@ local LAM = E.Libs.LAM
 --Lua functions
 --WoW API / Variables
 
----------------------- EVENTS ----------------------
---[[ function UF:EffectApplied(event, ...)
-    local sourceGUID, sourceName, destGUID, destName, spellId, value, quality, duration = ...
-    --self:UpdateElement_AbsorbBarByGUID(event, destGUID)
-    for unit in pairs(self.units) do
-			--print(unit)
-            if self[unit] then
-                DevTools_Dump(self[unit].AbsorbBar)
-            end
-
-	end
-
-    --print(event)
-    --print(...)
-end
-function UF:EffectUpdated(event, ...)
-    local guid, spellId, value, duration = ...
-    --self:UpdateElement_AbsorbBarByGUID(event, guid)
-    print("Updated")
-end
-function UF:EffectRemoved(event, ...)
-    local guid, spellId = ...
-    --self:UpdateElement_AbsorbBarByGUID(event, guid)
-    print("Removed")
-end ]]
-----------------------------------------------------
-
 -- Absorb Update
 function UF:Update_AbsorbBar(frame, unit)
 
@@ -46,11 +19,11 @@ function UF:Update_AbsorbBar(frame, unit)
         _unit = frame.unitframeType
     end
     local guid = UnitGUID(_unit)
+    if guid == nil then return end
 
     local health = healthBar:GetValue()
 	local _, maxHealth = healthBar:GetMinMaxValues()
 	local myCurrentHealAbsorb = LAM.Unit_Total(guid)
-    --print(_unit.." | "..myCurrentHealAbsorb)
 	--
     function CompactUnitFrameUtil_UpdateFillBar(selfFrame, frame, health, myCurrentHealAbsorb)
 		local totalWidth, totalHeight = frame:GetSize();
@@ -90,6 +63,70 @@ function UF:Update_AbsorbBar(frame, unit)
 
 end
 
+-- test
+local function Absorb_PostUpdate(self, unit, curHealth, maxHealth)
+
+    if unit == "player" then return end
+    local guid = UnitGUID(unit)
+    if guid == nil then return end
+
+    local health
+    local mxHealth
+    local _frame = self:GetParent()
+    local absorbBar = _frame.AbsorbBar
+    local healthBar = _frame.Health
+	local myCurrentHealAbsorb = LAM.Unit_Total(guid)
+
+    if myCurrentHealAbsorb == nil or myCurrentHealAbsorb <= 0 then return end
+
+    if curHealth then
+        health = curHealth
+        mxHealth = maxHealth
+    else
+        health = healthBar:GetValue()
+        local _, MH = healthBar:GetMinMaxValues()
+        mxHealth = MH
+    end
+
+	--
+    function CompactUnitFrameUtil_UpdateFillBar(selfFrame, frame, health, myCurrentHealAbsorb)
+		local totalWidth, totalHeight = frame:GetSize();
+		local amout = (health + myCurrentHealAbsorb) / maxHealth
+		local barOffsetX = (health / maxHealth) * totalWidth
+		local barOffsetXPercent = frame:GetWidth() * amout
+
+		local barSize = barOffsetXPercent - barOffsetX
+		if barSize + barOffsetX > totalWidth then
+			barSize = totalWidth - barOffsetX
+		end
+
+		selfFrame:SetWidth(barSize)
+		selfFrame:Show()
+	end
+	--
+
+	if ( myCurrentHealAbsorb > 0 and curHealth < maxHealth ) then
+		CompactUnitFrameUtil_UpdateFillBar(absorbBar.totalAbsorb,        healthBar, curHealth, myCurrentHealAbsorb)
+		CompactUnitFrameUtil_UpdateFillBar(absorbBar.totalAbsorbOverlay, healthBar, curHealth, myCurrentHealAbsorb)
+	else
+		absorbBar.totalAbsorb:Hide()
+		absorbBar.totalAbsorbOverlay:Hide()
+	end
+
+	local overAbsorb = false;
+	if ( curHealth - myCurrentHealAbsorb  > maxHealth  or  curHealth + myCurrentHealAbsorb > maxHealth ) then
+		overAbsorb = true;
+		myCurrentHealAbsorb = max(0, maxHealth - curHealth);
+	end
+
+	if ( overAbsorb ) then
+		absorbBar.overAbsorbGlow:Show();
+	else
+		absorbBar.overAbsorbGlow:Hide();
+	end
+
+end
+
 ----------------------------------------------------
 
 function UF:Configure_AbsorbBar(frame)
@@ -114,6 +151,12 @@ function UF:Configure_AbsorbBar(frame)
     frame.AbsorbBar.totalAbsorbOverlay:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\RaidFrame\Shield-Overlay]], "MIRROR")
     frame.AbsorbBar.totalAbsorbOverlay:SetPoint("LEFT", healthBar:GetStatusBarTexture(), "RIGHT")
     frame.AbsorbBar.totalAbsorbOverlay:SetSize(25, _h)
+
+    -- EVENT registering
+    if healthBar.PostUpdate then
+        hooksecurefunc(healthBar, "PostUpdate", Absorb_PostUpdate)
+    end
+    --
 
 end
 function UF:Construct_AbsorbBar(parent) -- ConstructElement_CutawayHealth

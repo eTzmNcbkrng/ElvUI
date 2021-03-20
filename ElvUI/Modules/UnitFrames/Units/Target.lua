@@ -25,16 +25,15 @@ function UF:Construct_TargetFrame(frame)
 	frame.Castbar.SafeZone = nil
 	frame.Castbar.LatencyTexture:Hide()
 	frame.RaidTargetIndicator = self:Construct_RaidIcon(frame)
-
 	--
 	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
-    frame.AbsorbBar:SetScript("OnEvent", function(self, event, ...)
-		if event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_AURA" or event == "PLAYER_TARGET_CHANGED" then
-            UF:Update_AbsorbBar(frame)
-			--print(frame)
+	frame.AbsorbBar:SetScript("OnEvent", function(self, event, ...)
+		if event == "UNIT_AURA" or event == "PLAYER_TARGET_CHANGED" then
+            if frame.db and frame.db.absorb and frame.db.absorb.enable then
+				UF:Update_AbsorbBar(frame)
+			end
 		end
 	end)
-	frame.AbsorbBar:RegisterEvent("UNIT_HEALTH_FREQUENT")
 	frame.AbsorbBar:RegisterEvent("UNIT_AURA")
 	frame.AbsorbBar:RegisterEvent("PLAYER_TARGET_CHANGED")
 	--

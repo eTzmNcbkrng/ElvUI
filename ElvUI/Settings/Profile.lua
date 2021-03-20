@@ -305,6 +305,8 @@ P.nameplates = {
 	cutawayHealthLength = 0.3,
 	cutawayHealthFadeOutTime = 0.6,
 
+	absorbBars = true,
+
 	alwaysShowTargetHealth = true,
 
 	colors = {
@@ -1380,6 +1382,8 @@ P.unitframe = {
 		forcehealthreaction = false,
 		powerclass = false,
 		colorhealthbyvalue = true,
+		customhealthbackdropAlpha = false,
+		custombackdropAlpha = {r = 0.12, g = 0.12, b = 0.12, a = 0.55},
 		customhealthbackdrop = false,
 		custompowerbackdrop = false,
 		customcastbarbackdrop = false,
@@ -1501,6 +1505,10 @@ P.unitframe = {
 				xOffset = 2,
 				yOffset = 0,
 				attachTextTo = "Health"
+			},
+			absorb = {
+				enable = true,
+				absorbBar = "ElvUI Norm"
 			},
 			fader = {
 				enable = false,
@@ -1740,6 +1748,10 @@ P.unitframe = {
 				xOffset = -2,
 				yOffset = 0,
 				attachTextTo = "Health"
+			},
+			absorb = {
+				enable = true,
+				absorbBar = "ElvUI Norm"
 			},
 			fader = {
 				enable = true,
@@ -3102,6 +3114,10 @@ P.unitframe = {
 				yOffset = 0,
 				xOffset = 2,
 			},
+			absorb = {
+				enable = true,
+				absorbBar = "ElvUI Norm"
+			},
 			fader = {
 				enable = true,
 				range = true,
@@ -3371,6 +3387,10 @@ P.unitframe = {
 				yOffset = 2,
 				xOffset = 0,
 			},
+			absorb = {
+				enable = true,
+				absorbBar = "ElvUI Norm"
+			},
 			fader = {
 				enable = true,
 				range = true,
@@ -3579,6 +3599,10 @@ P.unitframe = {
 				attachTextTo = "Health",
 				yOffset = 2,
 				xOffset = 0,
+			},
+			absorb = {
+				enable = true,
+				absorbBar = "ElvUI Norm"
 			},
 			fader = {
 				enable = true,
