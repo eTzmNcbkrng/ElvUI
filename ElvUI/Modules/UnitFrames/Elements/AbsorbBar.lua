@@ -6,64 +6,7 @@ local LAM = E.Libs.LAM
 --Lua functions
 --WoW API / Variables
 
--- Absorb Update
-function UF:Update_AbsorbBar(frame, unit)
-
-    local absorbBar = frame.AbsorbBar
-    local healthBar = frame.Health
-
-    local _unit
-    if unit then -- we pass it only for party 1,2...
-        _unit = unit
-    else
-        _unit = frame.unitframeType
-    end
-    local guid = UnitGUID(_unit)
-    if guid == nil then return end
-
-    local health = healthBar:GetValue()
-	local _, maxHealth = healthBar:GetMinMaxValues()
-	local myCurrentHealAbsorb = LAM.Unit_Total(guid)
-	--
-    function CompactUnitFrameUtil_UpdateFillBar(selfFrame, frame, health, myCurrentHealAbsorb)
-		local totalWidth, totalHeight = frame:GetSize();
-		local amout = (health + myCurrentHealAbsorb) / maxHealth
-		local barOffsetX = (health / maxHealth) * totalWidth
-		local barOffsetXPercent = frame:GetWidth() * amout
-
-		local barSize = barOffsetXPercent - barOffsetX
-		if barSize + barOffsetX > totalWidth then
-			barSize = totalWidth - barOffsetX
-		end
-
-		selfFrame:SetWidth(barSize)
-		selfFrame:Show()
-	end
-	--
-
-	if ( myCurrentHealAbsorb > 0 and health < maxHealth ) then
-		CompactUnitFrameUtil_UpdateFillBar(absorbBar.totalAbsorb,        healthBar, health, myCurrentHealAbsorb)
-		CompactUnitFrameUtil_UpdateFillBar(absorbBar.totalAbsorbOverlay, healthBar, health, myCurrentHealAbsorb)
-	else
-		absorbBar.totalAbsorb:Hide()
-		absorbBar.totalAbsorbOverlay:Hide()
-	end
-
-	local overAbsorb = false;
-	if ( health - myCurrentHealAbsorb  > maxHealth  or  health + myCurrentHealAbsorb > maxHealth ) then
-		overAbsorb = true;
-		myCurrentHealAbsorb = max(0, maxHealth - health);
-	end
-
-	if ( overAbsorb ) then
-		absorbBar.overAbsorbGlow:Show();
-	else
-		absorbBar.overAbsorbGlow:Hide();
-	end
-
-end
-
--- test
+-- Absorb Update everytime health change
 local function Absorb_PostUpdate(self, unit, curHealth, maxHealth)
 
     if unit == "player" then return end
@@ -77,7 +20,8 @@ local function Absorb_PostUpdate(self, unit, curHealth, maxHealth)
     local healthBar = _frame.Health
 	local myCurrentHealAbsorb = LAM.Unit_Total(guid)
 
-    if myCurrentHealAbsorb == nil or myCurrentHealAbsorb <= 0 then return end
+	if absorbBar == nil then return end -- idk sometimes changing target to new player return nil ?
+	if healthBar == nil then return end
 
     if curHealth then
         health = curHealth
@@ -89,10 +33,10 @@ local function Absorb_PostUpdate(self, unit, curHealth, maxHealth)
     end
 
 	--
-    function CompactUnitFrameUtil_UpdateFillBar(selfFrame, frame, health, myCurrentHealAbsorb)
+    function CompactUnitFrameUtil_UpdateFillBar(selfFrame, frame, _health, _maxHealth, myCurrentHealAbsorb)
 		local totalWidth, totalHeight = frame:GetSize();
-		local amout = (health + myCurrentHealAbsorb) / maxHealth
-		local barOffsetX = (health / maxHealth) * totalWidth
+		local amout = (_health + myCurrentHealAbsorb) / _maxHealth
+		local barOffsetX = (_health / _maxHealth) * totalWidth
 		local barOffsetXPercent = frame:GetWidth() * amout
 
 		local barSize = barOffsetXPercent - barOffsetX
@@ -105,18 +49,18 @@ local function Absorb_PostUpdate(self, unit, curHealth, maxHealth)
 	end
 	--
 
-	if ( myCurrentHealAbsorb > 0 and curHealth < maxHealth ) then
-		CompactUnitFrameUtil_UpdateFillBar(absorbBar.totalAbsorb,        healthBar, curHealth, myCurrentHealAbsorb)
-		CompactUnitFrameUtil_UpdateFillBar(absorbBar.totalAbsorbOverlay, healthBar, curHealth, myCurrentHealAbsorb)
+	if ( myCurrentHealAbsorb > 0 and health < mxHealth ) then
+		CompactUnitFrameUtil_UpdateFillBar(absorbBar.totalAbsorb,        healthBar, health, mxHealth, myCurrentHealAbsorb)
+		CompactUnitFrameUtil_UpdateFillBar(absorbBar.totalAbsorbOverlay, healthBar, health, mxHealth, myCurrentHealAbsorb)
 	else
 		absorbBar.totalAbsorb:Hide()
 		absorbBar.totalAbsorbOverlay:Hide()
 	end
 
 	local overAbsorb = false;
-	if ( curHealth - myCurrentHealAbsorb  > maxHealth  or  curHealth + myCurrentHealAbsorb > maxHealth ) then
+	if ( health - myCurrentHealAbsorb > mxHealth or health + myCurrentHealAbsorb > mxHealth ) then
 		overAbsorb = true;
-		myCurrentHealAbsorb = max(0, maxHealth - curHealth);
+		myCurrentHealAbsorb = max(0, mxHealth - health);
 	end
 
 	if ( overAbsorb ) then
@@ -126,10 +70,14 @@ local function Absorb_PostUpdate(self, unit, curHealth, maxHealth)
 	end
 
 end
-
+-- Absorb Update everytime new aura is triggered
+local function handleNewAura(...)
+	local parentFrame, unit, auraIconFrame, _, _, duration, expirationTime, type, _ = ...
+	Absorb_PostUpdate(parentFrame, unit)
+end
 ----------------------------------------------------
 
-function UF:Configure_AbsorbBar(frame)
+function UF:Configure_AbsorbBar(frame, isTarget)
     local healthBar = frame.Health
 	local db = frame.db
     --local _w, _h = healthBar:GetWidth(), healthBar:GetHeight()
@@ -153,9 +101,22 @@ function UF:Configure_AbsorbBar(frame)
     frame.AbsorbBar.totalAbsorbOverlay:SetSize(25, _h)
 
     -- EVENT registering
-    if healthBar.PostUpdate then
-        hooksecurefunc(healthBar, "PostUpdate", Absorb_PostUpdate)
-    end
+	if (frame.db and frame.db.absorb and frame.db.absorb.enable ) then
+		if healthBar.PostUpdate and not frame.AbsorbBar.hookedHealthBar then
+			hooksecurefunc(healthBar, "PostUpdate", Absorb_PostUpdate)
+			frame.AbsorbBar.hookedHealthBar = true
+		end
+		if frame.Buffs.PostUpdateIcon and not frame.AbsorbBar.hookedAura then
+			hooksecurefunc(frame.Buffs, "PostUpdateIcon", handleNewAura)
+			frame.AbsorbBar.hookedAura = true
+		end
+		if isTarget then
+			frame.AbsorbBar:SetScript("OnEvent", function(self, event, _)
+				if event == "PLAYER_TARGET_CHANGED" then Absorb_PostUpdate(frame, "target") end
+			end)
+			frame.AbsorbBar:RegisterEvent("PLAYER_TARGET_CHANGED")
+		end
+	end
     --
 
 end

@@ -25,18 +25,6 @@ function UF:Construct_TargetFrame(frame)
 	frame.Castbar.SafeZone = nil
 	frame.Castbar.LatencyTexture:Hide()
 	frame.RaidTargetIndicator = self:Construct_RaidIcon(frame)
-	--
-	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
-	frame.AbsorbBar:SetScript("OnEvent", function(self, event, ...)
-		if event == "UNIT_AURA" or event == "PLAYER_TARGET_CHANGED" then
-            if frame.db and frame.db.absorb and frame.db.absorb.enable then
-				UF:Update_AbsorbBar(frame)
-			end
-		end
-	end)
-	frame.AbsorbBar:RegisterEvent("UNIT_AURA")
-	frame.AbsorbBar:RegisterEvent("PLAYER_TARGET_CHANGED")
-	--
 
 	frame.ComboPointsHolder = CreateFrame("Frame", nil, frame)
 	frame.ComboPointsHolder:Point("BOTTOM", E.UIParent, "BOTTOM", 0, 200)
@@ -55,6 +43,10 @@ function UF:Construct_TargetFrame(frame)
 	frame.customTexts = {}
 	frame:Point("BOTTOMRIGHT", E.UIParent, "BOTTOM", 413, 68)
 	E:CreateMover(frame, frame:GetName().."Mover", L["Target Frame"], nil, nil, nil, "ALL,SOLO", nil, "unitframe,target,generalGroup")
+
+	--
+	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
+	--
 
 	frame.unitframeType = "target"
 end
@@ -118,9 +110,6 @@ function UF:Update_TargetFrame(frame, db)
 	--Health
 	UF:Configure_HealthBar(frame)
 
-	--Absorb
-	UF:Configure_AbsorbBar(frame)
-
 	--Name
 	UF:UpdateNameSettings(frame)
 
@@ -170,6 +159,9 @@ function UF:Update_TargetFrame(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame, true)
 
 	E:SetMoverSnapOffset(frame:GetName().."Mover", -(12 + db.castbar.height))
 	frame:UpdateAllElements("ForceUpdate")

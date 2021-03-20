@@ -44,23 +44,6 @@ function UF:Construct_PartyFrames()
 
 		self.Power = UF:Construct_PowerBar(self, true, true, "LEFT")
 		self.Power.frequentUpdates = false
-
-		--
-		self.AbsorbBar = UF:Construct_AbsorbBar(self)
-		self.AbsorbBar:SetScript("OnEvent", function(_self, event, unit)
-			if event == "UNIT_AURA" then
-				--DevTools_Dump(_self)
-				local parent = _self:GetParent()
-				if parent.unit == unit then
-					if self.db and self.db.absorb and self.db.absorb.enable then
-						UF:Update_AbsorbBar(parent, unit)
-					end
-				end
-			end
-		end)
-		self.AbsorbBar:RegisterEvent("UNIT_AURA")
-		--
-
 		self.Portrait3D = UF:Construct_Portrait(self, "model")
 		self.Portrait2D = UF:Construct_Portrait(self, "texture")
 		self.InfoPanel = UF:Construct_InfoPanel(self)
@@ -83,6 +66,10 @@ function UF:Construct_PartyFrames()
 		self.customTexts = {}
 
 		self.Castbar = UF:Construct_Castbar(self)
+
+		--
+		self.AbsorbBar = UF:Construct_AbsorbBar(self)
+		--
 
 		self.unitframeType = "party"
 	end
@@ -257,9 +244,6 @@ function UF:Update_PartyFrames(frame, db)
 		UF:Configure_InfoPanel(frame)
 		UF:Configure_HealthBar(frame)
 
-		--Absorb
-		UF:Configure_AbsorbBar(frame)
-
 		UF:UpdateNameSettings(frame)
 
 		UF:Configure_Power(frame)
@@ -295,6 +279,9 @@ function UF:Update_PartyFrames(frame, db)
 		UF:Configure_ReadyCheckIcon(frame)
 
 		UF:Configure_CustomTexts(frame)
+
+		--Absorb
+		UF:Configure_AbsorbBar(frame)
 	end
 
 	--Fader

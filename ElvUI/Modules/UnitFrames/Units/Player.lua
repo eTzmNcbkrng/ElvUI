@@ -26,17 +26,6 @@ function UF:Construct_PlayerFrame(frame)
 	frame.Buffs = self:Construct_Buffs(frame)
 	frame.Debuffs = self:Construct_Debuffs(frame)
 	frame.Castbar = self:Construct_Castbar(frame, L["Player Castbar"])
-	--
-	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
-	frame.AbsorbBar:SetScript("OnEvent", function(self, event, ...)
-		if event == "UNIT_AURA" then
-            if frame.db and frame.db.absorb and frame.db.absorb.enable then
-				UF:Update_AbsorbBar(frame)
-			end
-		end
-	end)
-	frame.AbsorbBar:RegisterEvent("UNIT_AURA")
-	--
 
 	--Create a holder frame all "classbars" can be positioned into
 	if CAN_HAVE_CLASSBAR then
@@ -70,6 +59,10 @@ function UF:Construct_PlayerFrame(frame)
 
 	frame:Point("BOTTOMLEFT", E.UIParent, "BOTTOM", -413, 68) --Set to default position
 	E:CreateMover(frame, frame:GetName().."Mover", L["Player Frame"], nil, nil, nil, "ALL,SOLO", nil, "unitframe,player,generalGroup")
+
+	--
+	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
+	--
 
 	frame.unitframeType = "player"
 end
@@ -139,9 +132,6 @@ function UF:Update_PlayerFrame(frame, db)
 	--Health
 	UF:Configure_HealthBar(frame)
 
-	--Absorb
-	UF:Configure_AbsorbBar(frame)
-
 	--Name
 	UF:UpdateNameSettings(frame)
 
@@ -203,6 +193,9 @@ function UF:Update_PlayerFrame(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame)
 
 	E:SetMoverSnapOffset(frame:GetName().."Mover", -(12 + db.castbar.height))
 	frame:UpdateAllElements("ForceUpdate")
