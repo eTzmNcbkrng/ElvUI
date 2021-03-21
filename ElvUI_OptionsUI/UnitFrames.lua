@@ -1468,8 +1468,34 @@ local function GetOptionsTable_Castbar(hasTicks, updateFunc, groupName, numUnits
 				desc = L["Display the castbar inside the information panel, the icon will be displayed outside the main unitframe."],
 				disabled = function() return not E.db.unitframe.units[groupName].infoPanel or not E.db.unitframe.units[groupName].infoPanel.enable end
 			},
-			iconSettings = {
+			showCastbarText = {
 				order = 13,
+				type = "toggle",
+				name = "Show Cast bar Text",
+				desc = "Show Cast bar Text",
+			},
+			showCastbarTime = {
+				order = 14,
+				type = "toggle",
+				name = "Show Cast bar Time",
+				desc = "Show Cast bar Time",
+			},
+			barOffsetX = {
+				order = 15,
+				type = "range",
+				name = "OffsetX",
+				desc = "OffsetX relative to parent",
+				min =-300, max = 300, step = 1
+			},
+			barOffsetY = {
+				order = 16,
+				type = "range",
+				name = "OffsetY",
+				desc = "OffsetY relative to parent",
+				min =-300, max = 300, step = 1
+			},
+			iconSettings = {
+				order = 17,
 				type = "group",
 				name = L["Icon"],
 				guiInline = true,
@@ -1529,7 +1555,7 @@ local function GetOptionsTable_Castbar(hasTicks, updateFunc, groupName, numUnits
 				}
 			},
 			strataAndLevel = {
-				order = 14,
+				order = 18,
 				type = "group",
 				name = L["Strata and Level"],
 				get = function(info) return E.db.unitframe.units[groupName].castbar.strataAndLevel[info[#info]] end,
@@ -1571,20 +1597,6 @@ local function GetOptionsTable_Castbar(hasTicks, updateFunc, groupName, numUnits
 						min = 2, max = 128, step = 1
 					}
 				}
-			},
-			barOffsetX = {
-				order = 15,
-				type = "range",
-				name = "OffsetX",
-				desc = "OffsetX relative to parent",
-				min =-300, max = 300, step = 1
-			},
-			barOffsetY = {
-				order = 16,
-				type = "range",
-				name = "OffsetY",
-				desc = "OffsetY relative to parent",
-				min =-300, max = 300, step = 1
 			},
 		}
 	}

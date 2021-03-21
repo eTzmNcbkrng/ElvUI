@@ -112,6 +112,7 @@ function NP:Update_Glow(frame)
 		frame.Shadow:Hide()
 		frame.Spark:Hide()
 	end
+
 end
 
 function NP:Configure_Glow(frame)
@@ -197,6 +198,25 @@ function NP:Configure_Glow(frame)
 			end
 		end
 	end
+
+	-- new glowType update
+	--[[ Target Glow Style Option Variables
+		type1 - default ElvUI Blurred border glow
+		type2 - thin border
+		type3 - medium border
+		type4 - thick border
+	]]
+	local glowType = self.db.units.TARGET.glowType
+	if glowType == "type1" then
+		frame.Shadow:SetBackdrop({edgeFile = LSM:Fetch("border", "ElvUI GlowBorder"), edgeSize = E:Scale(6)})
+	elseif glowType == "type2" then
+		frame.Shadow:SetBackdrop({edgeFile = LSM:Fetch("border", "ElvUI GlowBorderThin"), edgeSize = E:Scale(6)})
+	elseif glowType == "type3" then
+		frame.Shadow:SetBackdrop({edgeFile = LSM:Fetch("border", "ElvUI GlowBorderMedium"), edgeSize = E:Scale(6)})
+	elseif glowType == "type4" then
+		frame.Shadow:SetBackdrop({edgeFile = LSM:Fetch("border", "ElvUI GlowBorderThick"), edgeSize = E:Scale(6)})
+	end
+
 end
 
 local Textures = {"Spark", "TopIndicator", "LeftIndicator", "RightIndicator"}
@@ -204,7 +224,6 @@ local Textures = {"Spark", "TopIndicator", "LeftIndicator", "RightIndicator"}
 function NP:Construct_Glow(frame)
 	frame.Shadow = CreateFrame("Frame", "$parentGlow", frame)
 	frame.Shadow:SetFrameLevel(frame.Health:GetFrameLevel() - 1)
-	frame.Shadow:SetBackdrop({edgeFile = LSM:Fetch("border", "ElvUI GlowBorder"), edgeSize = E:Scale(6)})
 	frame.Shadow:Hide()
 
 	for _, object in ipairs(Textures) do

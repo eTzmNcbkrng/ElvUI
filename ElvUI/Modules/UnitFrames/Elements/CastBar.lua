@@ -244,6 +244,18 @@ function UF:Configure_Castbar(frame)
 			end
 		end
 
+		-- Show/hide Castbar Text and Time
+		if db.castbar.showCastbarText then
+			castbar.Text:Show()
+		else
+			castbar.Text:Hide()
+		end
+		if db.castbar.showCastbarTime then
+			castbar.Time:Show()
+		else
+			castbar.Time:Hide()
+		end
+
 		castbar.custom_backdrop = UF.db.colors.customcastbarbackdrop and UF.db.colors.castbar_backdrop
 		UF:ToggleTransparentStatusBar(UF.db.colors.transparentCastbar, castbar, castbar.bg, nil, UF.db.colors.invertCastbar)
 	else

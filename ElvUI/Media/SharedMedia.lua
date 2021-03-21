@@ -182,6 +182,9 @@ E.Media = {
 		Cross = M..[[Textures\Cross.tga]],
 		DPS = M..[[Textures\DPS.tga]],
 		ExitVehicle = M..[[Textures\ExitVehicle.tga]],
+		GlowTexThin = M..[[Textures\GlowTexThin.tga]],
+		GlowTexMedium = M..[[Textures\GlowTexMedium.tga]],
+		GlowTexThick = M..[[Textures\GlowTexThick.tga]],
 		GlowTex = M..[[Textures\GlowTex.tga]],
 		Healer = M..[[Textures\Healer.tga]],
 		HelloKitty = M..[[Textures\HelloKitty.tga]],
@@ -220,6 +223,9 @@ E.Media = {
 	}
 }
 
+LSM:Register("border", "ElvUI GlowBorderThin", E.Media.Textures.GlowTexThin)
+LSM:Register("border", "ElvUI GlowBorderMedium", E.Media.Textures.GlowTexMedium)
+LSM:Register("border", "ElvUI GlowBorderThick", E.Media.Textures.GlowTexThick)
 LSM:Register("border", "ElvUI GlowBorder", E.Media.Textures.GlowTex)
 LSM:Register("font", "Continuum Medium", E.Media.Fonts.ContinuumMedium)
 LSM:Register("font", "Die Die Die!", E.Media.Fonts.DieDieDie, LSM.LOCALE_BIT_ruRU + LSM.LOCALE_BIT_western)

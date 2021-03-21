@@ -18,10 +18,9 @@ local function Absorb_PostUpdate(self, unit, curHealth, maxHealth)
     local _frame = self:GetParent()
     local absorbBar = _frame.AbsorbBar
     local healthBar = _frame.Health
-	local myCurrentHealAbsorb = LAM.Unit_Total(guid)
-
 	if absorbBar == nil then return end -- idk sometimes changing target to new player return nil ?
 	if healthBar == nil then return end
+	local myCurrentHealAbsorb = LAM.Unit_Total(guid)
 
     if curHealth then
         health = curHealth

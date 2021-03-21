@@ -4429,8 +4429,19 @@ E.Options.args.nameplate = {
 						["style8"] = L["Background Glow"].." + "..L["Side Arrows"]
 					}
 				},
-				arrowSize = {
+				glowType = {
 					order = 6,
+					type = "select",
+					name = L["Glow Texture type"],
+					values = {
+						["type1"] = L["Border Glow Blurred"],
+						["type2"] = L["Border Glow Thin"],
+						["type3"] = L["Border Glow Medium"],
+						["type4"] = L["Border Glow Thick"],
+					}
+				},
+				arrowSize = {
+					order = 7,
 					type = 'range',
 					name = L["Arrow Size"],
 					min = 1,
@@ -4439,19 +4450,19 @@ E.Options.args.nameplate = {
 					isPercent = false
 				},
 				arrowXOffset = {
-					order = 7,
+					order = 8,
 					type = "range",
 					name = L["Arrow X-Offset"],
 					min = -20, max = 20, step = 1
 				},
 				arrowYOffset = {
-					order = 8,
+					order = 9,
 					type = "range",
 					name = L["Arrow Y-Offset"],
 					min = -20, max = 20, step = 1
 				},
 				alwaysShowTargetHealth = {
-					order = 9,
+					order = 10,
 					type = "toggle",
 					name = L["Always Show Target Health"],
 					get = function(info) return E.db.nameplates.alwaysShowTargetHealth end,
@@ -4462,7 +4473,7 @@ E.Options.args.nameplate = {
 					customWidth = 200
 				},
 				comboPointsGroup = {
-					order = 10,
+					order = 11,
 					type = "group",
 					name = L["COMBO_POINTS"],
 					guiInline = true,
@@ -4517,7 +4528,7 @@ E.Options.args.nameplate = {
 					}
 				},
 				arrows = {
-					order = 11,
+					order = 12,
 					name = L["Arrow Texture"],
 					type = 'multiselect',
 					customWidth = 80,
