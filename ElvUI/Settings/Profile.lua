@@ -1508,7 +1508,7 @@ P.unitframe = {
 				attachTextTo = "Health"
 			},
 			absorb = {
-				enable = true,
+				enabled = true,
 				absorbBar = "ElvUI Norm"
 			},
 			fader = {
@@ -1755,7 +1755,7 @@ P.unitframe = {
 				attachTextTo = "Health"
 			},
 			absorb = {
-				enable = true,
+				enabled = true,
 				absorbBar = "ElvUI Norm"
 			},
 			fader = {
@@ -3140,7 +3140,7 @@ P.unitframe = {
 				xOffset = 2,
 			},
 			absorb = {
-				enable = true,
+				enabled = true,
 				absorbBar = "ElvUI Norm"
 			},
 			fader = {
@@ -3417,7 +3417,7 @@ P.unitframe = {
 				xOffset = 0,
 			},
 			absorb = {
-				enable = true,
+				enabled = true,
 				absorbBar = "ElvUI Norm"
 			},
 			fader = {
@@ -3630,7 +3630,7 @@ P.unitframe = {
 				xOffset = 0,
 			},
 			absorb = {
-				enable = true,
+				enabled = true,
 				absorbBar = "ElvUI Norm"
 			},
 			fader = {

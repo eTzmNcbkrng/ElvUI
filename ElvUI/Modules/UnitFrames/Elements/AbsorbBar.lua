@@ -49,6 +49,8 @@ local function Absorb_PostUpdate(self, unit, curHealth, maxHealth)
         mxHealth = MH
     end
 
+	--print(unit, health, mxHealth, myCurrentHealAbsorb)
+
 	--
     function CompactUnitFrameUtil_UpdateFillBar(selfFrame, frame, _health, _maxHealth, myCurrentHealAbsorb)
 		local totalWidth, totalHeight = frame:GetSize();
@@ -94,9 +96,21 @@ local function handleNewAura(...)
 end
 ----------------------------------------------------
 
-function UF:Configure_AbsorbBar(frame, isTarget)
+function UF:Configure_AbsorbBar(frame)
     local healthBar = frame.Health
+    local absorbBar = frame.AbsorbBar
 	local db = frame.db
+
+	 if frame.db.absorb.enabled then
+		if not frame:IsElementEnabled("AbsorbBar") then
+			frame:EnableElement("AbsorbBar")
+			absorbBar:Show()
+		end
+	elseif frame:IsElementEnabled("AbsorbBar") then
+		frame:DisableElement("AbsorbBar")
+		absorbBar:Hide()
+	end
+
     --local _w, _h = healthBar:GetWidth(), healthBar:GetHeight()
     local _w, _h = db.width, db.height
     _w = _w - (frame.BORDER + frame.SPACING + (frame.HAPPINESS_WIDTH or 0)) - (frame.BORDER + frame.SPACING + frame.PORTRAIT_WIDTH)
@@ -118,25 +132,33 @@ function UF:Configure_AbsorbBar(frame, isTarget)
     frame.AbsorbBar.totalAbsorbOverlay:SetSize(25, _h)
 
     -- EVENT registering
-	if (frame.db and frame.db.absorb and frame.db.absorb.enable ) then
+	if( frame.db and frame.db.absorb and frame.db.absorb.enabled ) then
 		if healthBar.PostUpdate and not frame.AbsorbBar.hookedHealthBar then
 			hooksecurefunc(healthBar, "PostUpdate", Absorb_PostUpdate)
 			frame.AbsorbBar.hookedHealthBar = true
 		end
-		if frame.Buffs.PostUpdateIcon and not frame.AbsorbBar.hookedAura then
+		--[[ if frame.Buffs.PostUpdateIcon and not frame.AbsorbBar.hookedAura then
 			hooksecurefunc(frame.Buffs, "PostUpdateIcon", handleNewAura)
 			frame.AbsorbBar.hookedAura = true
-		end
-		if isTarget then
-			frame.AbsorbBar:SetScript("OnEvent", function(self, event, _)
-				if event == "PLAYER_TARGET_CHANGED" then Absorb_PostUpdate(frame, "target") end
-			end)
-			frame.AbsorbBar:RegisterEvent("PLAYER_TARGET_CHANGED")
+		end ]]
+		-- postUpdateIcon doesnt trigger when an aura has been removed, so we fallback with this until I find smth else
+		if( not frame.AbsorbBar.hookedAura ) then
+				frame.AbsorbBar:SetScript("OnEvent", function(_self, event, unit)
+					if event == "UNIT_AURA" then
+						local parent = _self:GetParent()
+						if parent.unit == unit then
+							Absorb_PostUpdate(_self, unit)
+						end
+					end
+				end)
+			frame.AbsorbBar:RegisterEvent("UNIT_AURA")
+			frame.AbsorbBar.hookedAura = true
 		end
 	end
-    --
 
 end
+
+
 function UF:Construct_AbsorbBar(parent) -- ConstructElement_CutawayHealth
 	local healthBar = parent.Health
 

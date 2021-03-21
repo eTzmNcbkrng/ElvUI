@@ -161,7 +161,7 @@ function UF:Update_TargetFrame(frame, db)
 	UF:Configure_CustomTexts(frame)
 
 	--Absorb
-	UF:Configure_AbsorbBar(frame, true)
+	UF:Configure_AbsorbBar(frame)
 
 	E:SetMoverSnapOffset(frame:GetName().."Mover", -(12 + db.castbar.height))
 	frame:UpdateAllElements("ForceUpdate")

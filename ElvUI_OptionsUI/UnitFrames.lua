@@ -877,7 +877,7 @@ local function GetOptionsTable_Absorb(updateFunc, groupName, numUnits)
 				type = "header",
 				name = L["Absorb"]
 			},
-			enable = {
+			enabled = {
 				order = 2,
 				type = "toggle",
 				name = L["Enable Absorb bar"],
