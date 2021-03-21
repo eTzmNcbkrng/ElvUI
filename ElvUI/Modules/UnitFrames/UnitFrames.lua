@@ -1407,6 +1407,11 @@ function UF:Initialize()
 		ORD.MatchBySpellName = true
 	end
 
+	LAM.UnregisterAllCallbacks(self);
+	LAM.RegisterCallback(self, "EffectApplied");
+	LAM.RegisterCallback(self, "EffectUpdated");
+	LAM.RegisterCallback(self, "EffectRemoved");
+
 	self:UpdateRangeCheckSpells()
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB", "UpdateRangeCheckSpells")
 end

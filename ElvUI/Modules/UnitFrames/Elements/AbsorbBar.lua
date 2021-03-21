@@ -3,13 +3,31 @@ local UF = E:GetModule("UnitFrames")
 local LSM = E.Libs.LSM
 local LAM = E.Libs.LAM
 
+local _effectTrigger = false; -- in case healthBar.PostUpdate trigger to fast the absorb function
+
 --Lua functions
 --WoW API / Variables
+
+---------------------- EVENTS ----------------------
+function UF:EffectApplied(event, ...)
+    local sourceGUID, sourceName, destGUID, destName, spellId, value, quality, duration = ...
+    _effectTrigger = true;
+end
+function UF:EffectUpdated(event, ...)
+    local guid, spellId, value, duration = ...
+	_effectTrigger = true;
+end
+function UF:EffectRemoved(event, ...)
+    local guid, spellId = ...
+	_effectTrigger = true;
+end
+----------------------------------------------------
 
 -- Absorb Update everytime health change
 local function Absorb_PostUpdate(self, unit, curHealth, maxHealth)
 
-    if unit == "player" then return end
+	if not _effectTrigger then return end
+
     local guid = UnitGUID(unit)
     if guid == nil then return end
 
