@@ -100,21 +100,7 @@ function UF:Configure_AbsorbBar(frame)
     local healthBar = frame.Health
     local absorbBar = frame.AbsorbBar
 	local db = frame.db
-
-	 if frame.db.absorb.enabled then
-		if not frame:IsElementEnabled("AbsorbBar") then
-			frame:EnableElement("AbsorbBar")
-			absorbBar:Show()
-		end
-	elseif frame:IsElementEnabled("AbsorbBar") then
-		frame:DisableElement("AbsorbBar")
-		absorbBar:Hide()
-	end
-
-    --local _w, _h = healthBar:GetWidth(), healthBar:GetHeight()
-    local _w, _h = db.width, db.height
-    _w = _w - (frame.BORDER + frame.SPACING + (frame.HAPPINESS_WIDTH or 0)) - (frame.BORDER + frame.SPACING + frame.PORTRAIT_WIDTH)
-    _h = _h - (frame.BORDER + frame.SPACING + frame.CLASSBAR_YOFFSET) - (frame.BORDER + frame.SPACING + frame.BOTTOM_OFFSET)
+    local _w, _h = healthBar:GetWidth(), healthBar:GetHeight()
 
     -- Glowing spark
     frame.AbsorbBar.overAbsorbGlow:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\RaidFrame\Shield-Overshield]])
