@@ -162,6 +162,10 @@ E.Media = {
 		TyroneBiggums = M..[[ChatLogos\TyroneBiggums.tga]]
 	},
 	Textures = {
+		AbsorbSpark = M..[[Textures\RaidFrame\Shield-Overshield.blp]],
+		AbsorbOverlay = M..[[Textures\RaidFrame\Shield-Overlay.blp]],
+		AbsorbOverlay2 = M..[[Textures\RaidFrame\Shield-Overlay2.blp]],
+		AbsorbOverlay3 = M..[[Textures\RaidFrame\Shield-Overlay3.blp]],
 		AllianceLogo = M..[[Textures\Alliance-Logo.blp]],
 		Arrow = M..[[Textures\Arrow.tga]],
 		Arrow1 = M..[[Textures\Arrow1.tga]],
@@ -223,6 +227,12 @@ E.Media = {
 	}
 }
 
+-- Absorb
+LSM:Register("background", "AbsorbSpark", E.Media.Textures.AbsorbSpark)
+LSM:Register("background", "AbsorbOverlay", E.Media.Textures.AbsorbOverlay)
+LSM:Register("background", "AbsorbOverlay2", E.Media.Textures.AbsorbOverlay2)
+LSM:Register("background", "AbsorbOverlay3", E.Media.Textures.AbsorbOverlay3)
+--
 LSM:Register("border", "ElvUI GlowBorderThin", E.Media.Textures.GlowTexThin)
 LSM:Register("border", "ElvUI GlowBorderMedium", E.Media.Textures.GlowTexMedium)
 LSM:Register("border", "ElvUI GlowBorderThick", E.Media.Textures.GlowTexThick)

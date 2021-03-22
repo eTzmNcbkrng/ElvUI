@@ -91,10 +91,12 @@ end
 
 function NP:Configure_AbsorbBar(frame)
     local healthBar = frame.Health
-    local _w, _h = healthBar:GetWidth(), healthBar:GetHeight()
+    --local _w, _h = healthBar:GetWidth(), healthBar:GetHeight()
+	local _w = self.db.units[frame.UnitType].health.width * (frame.currentScale or 1)
+	local _h = self.db.units[frame.UnitType].health.height * (frame.currentScale or 1)
 
     -- Glowing spark
-    frame.AbsorbBar.overAbsorbGlow:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\RaidFrame\Shield-Overshield]])
+    frame.AbsorbBar.overAbsorbGlow:SetTexture(LSM:Fetch("background", "AbsorbSpark"))
     frame.AbsorbBar.overAbsorbGlow:SetBlendMode("ADD");
     frame.AbsorbBar.overAbsorbGlow:SetPoint("RIGHT", healthBar, "RIGHT", 6, 0)
     frame.AbsorbBar.overAbsorbGlow:SetSize(12, _h)
@@ -104,7 +106,7 @@ function NP:Configure_AbsorbBar(frame)
     frame.AbsorbBar.totalAbsorb:SetSize(1, _h)
     -- Total absorb overlay
     frame.AbsorbBar.totalAbsorbOverlay:SetHorizTile(true)
-    frame.AbsorbBar.totalAbsorbOverlay:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\RaidFrame\Shield-Overlay]], "MIRROR")
+    frame.AbsorbBar.totalAbsorbOverlay:SetTexture(LSM:Fetch("background", "AbsorbOverlay"), "MIRROR")
     frame.AbsorbBar.totalAbsorbOverlay:SetPoint("LEFT", healthBar:GetStatusBarTexture(), "RIGHT")
     frame.AbsorbBar.totalAbsorbOverlay:SetSize(1, _h)
 

@@ -375,9 +375,9 @@ function NP:OnShow(isConfig, dontHideHighlight)
 		if NP.db.units[unitType].health.enable or NP.db.alwaysShowTargetHealth then
 			NP:Configure_HealthBar(frame, true)
 			NP:Configure_CastBar(frame, true)
+			NP:Configure_AbsorbBar(frame)
 		end
 
-		NP:Configure_AbsorbBar(frame)
 		NP:Configure_Glow(frame)
 		NP:Configure_Elite(frame)
 		NP:Configure_Highlight(frame)

@@ -97,25 +97,25 @@ end
 ----------------------------------------------------
 
 function UF:Configure_AbsorbBar(frame)
+	if not frame.VARIABLES_SET then return end
     local healthBar = frame.Health
     local absorbBar = frame.AbsorbBar
 	local db = frame.db
-    local _w, _h = healthBar:GetWidth(), healthBar:GetHeight()
 
     -- Glowing spark
-    frame.AbsorbBar.overAbsorbGlow:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\RaidFrame\Shield-Overshield]])
+    frame.AbsorbBar.overAbsorbGlow:SetTexture(LSM:Fetch("background", "AbsorbSpark"))
     frame.AbsorbBar.overAbsorbGlow:SetBlendMode("ADD");
     frame.AbsorbBar.overAbsorbGlow:SetPoint("RIGHT", healthBar, "RIGHT", 6, 0)
-    frame.AbsorbBar.overAbsorbGlow:SetSize(12, _h)
+    frame.AbsorbBar.overAbsorbGlow:SetSize(12, healthBar.HEIGHT)
     -- Total absorb
     frame.AbsorbBar.totalAbsorb:SetTexture(LSM:Fetch("statusbar", self.db.statusbar)) -- same bar as health bar
     frame.AbsorbBar.totalAbsorb:SetPoint("LEFT", healthBar:GetStatusBarTexture(), "RIGHT")
-    frame.AbsorbBar.totalAbsorb:SetSize(25, _h)
+    frame.AbsorbBar.totalAbsorb:SetSize(25, healthBar.HEIGHT)
     -- Total absorb overlay
     frame.AbsorbBar.totalAbsorbOverlay:SetHorizTile(true)
-    frame.AbsorbBar.totalAbsorbOverlay:SetTexture([[Interface\AddOns\ElvUI\Media\Textures\RaidFrame\Shield-Overlay]], "MIRROR")
+    frame.AbsorbBar.totalAbsorbOverlay:SetTexture(LSM:Fetch("background", "AbsorbOverlay"), "MIRROR")
     frame.AbsorbBar.totalAbsorbOverlay:SetPoint("LEFT", healthBar:GetStatusBarTexture(), "RIGHT")
-    frame.AbsorbBar.totalAbsorbOverlay:SetSize(25, _h)
+    frame.AbsorbBar.totalAbsorbOverlay:SetSize(25, healthBar.HEIGHT)
 
     -- EVENT registering
 	if( frame.db and frame.db.absorb and frame.db.absorb.enabled ) then
