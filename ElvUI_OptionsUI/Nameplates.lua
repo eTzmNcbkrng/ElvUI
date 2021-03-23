@@ -3559,7 +3559,118 @@ local function GetUnitSettings(unit, name)
 						min = -100, max = 100, step = 1
 					}
 				}
-			}
+			},
+			numberGroup = {
+				order = 10,
+				name = L["Unit Number"],
+				type = "group",
+				get = function(info)
+					return E.db.nameplates.units[unit].number[info[#info]]
+				end,
+				set = function(info, value)
+					E.db.nameplates.units[unit].number[info[#info]] = value
+					NP:ConfigureAll()
+				end,
+				args = {
+					header = {
+						order = 0,
+						type = "header",
+						name = L["Unit Number"]
+					},
+					enable = {
+						order = 1,
+						type = "toggle",
+						name = L["Enable"]
+					},
+					colorGroup = {
+						type = "group",
+						order = 2,
+						name = L["Colors"],
+						guiInline = true,
+						get = function(info)
+							local t = E.db.nameplates.units[unit].number[info[#info]]
+							local d = P.nameplates.units[unit].number[info[#info]]
+							return t.r, t.g, t.b, d.r, d.g, d.b
+						end,
+						set = function(info, r, g, b)
+							local t = E.db.nameplates.units[unit].number[info[#info]]
+							t.r, t.g, t.b = r, g, b
+							NP:ConfigureAll()
+						end,
+						args = {
+							unitColor = {
+								name = L["Number Color"],
+								type = "color",
+								order = 1,
+							}
+						}
+					},
+					positionGroup = {
+						type = "group",
+						order = 3,
+						name = L["Position"],
+						guiInline = true,
+						get = function(info)
+							return E.db.nameplates.units[unit].number[info[#info]]
+						end,
+						set = function(info, value)
+							E.db.nameplates.units[unit].number[info[#info]] = value
+							NP:ConfigureAll()
+						end,
+						args = {
+							offsetX = {
+								order = 1,
+								type = "range",
+								name = L["offsetX"],
+								desc = L["offsetX"],
+								min = -300, max = 300, step = 1
+							},
+							offsetY = {
+								order = 2,
+								type = "range",
+								name = L["offsetY"],
+								desc = L["offsetY"],
+								min = -300, max = 300, step = 1
+							},
+						}
+					},
+					fontGroup = {
+						type = "group",
+						order = 4,
+						name = L["Fonts"],
+						guiInline = true,
+						get = function(info)
+							return E.db.nameplates.units[unit].number[info[#info]]
+						end,
+						set = function(info, value)
+							E.db.nameplates.units[unit].number[info[#info]] = value
+							NP:ConfigureAll()
+						end,
+						args = {
+							font = {
+								order = 1,
+								type = "select",
+								name = L["Font"],
+								dialogControl = "LSM30_Font",
+								values = AceGUIWidgetLSMlists.font
+							},
+							fontSize = {
+								order = 2,
+								name = L["FONT_SIZE"],
+								type = "range",
+								min = 4, max = 32, step = 1
+							},
+							fontOutline = {
+								order = 3,
+								type = "select",
+								name = L["Font Outline"],
+								desc = L["Set the font outline."],
+								values = C.Values.FontFlags
+							}
+						}
+					}
+				}
+			},
 		}
 	}
 

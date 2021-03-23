@@ -367,6 +367,7 @@ function NP:OnShow(isConfig, dontHideHighlight)
 
 		NP:Configure_Level(frame)
 		NP:Configure_Name(frame)
+		NP:Configure_Number(frame)
 
 		NP:Configure_Auras(frame, "Buffs")
 		NP:Configure_Auras(frame, "Debuffs")
@@ -409,12 +410,6 @@ function NP:OnHide(isConfig, dontHideHighlight)
 
 	frame.unit = nil
 	frame.isGroupUnit = nil
-
-	frame.AbsorbBar.overAbsorbGlow:Hide()
-	frame.AbsorbBar.totalAbsorb:SetWidth(0)
-	frame.AbsorbBar.totalAbsorb:Hide()
-	frame.AbsorbBar.totalAbsorbOverlay:SetWidth(0)
-	frame.AbsorbBar.totalAbsorbOverlay:Hide()
 
 	for i = 1, #frame.Buffs do
 		frame.Buffs[i]:SetScript("OnUpdate", nil)
@@ -487,6 +482,13 @@ function NP:OnHide(isConfig, dontHideHighlight)
 	frame.ThreatScale = nil
 	frame.ThreatStatus = nil
 
+	frame.AbsorbBar.overAbsorbGlow:Hide()
+	frame.AbsorbBar.totalAbsorb:SetWidth(0)
+	frame.AbsorbBar.totalAbsorb:Hide()
+	frame.AbsorbBar.totalAbsorbOverlay:SetWidth(0)
+	frame.AbsorbBar.totalAbsorbOverlay:Hide()
+	frame.Number:SetText()
+
 	if not dontHideHighlight then
 		frame.oldHighlight:Hide()
 	end
@@ -544,8 +546,10 @@ function NP:UpdateElement_All(frame, noTargetFrame, filterIgnore)
 
 	frame.Level:ClearAllPoints()
 	frame.Name:ClearAllPoints()
+	frame.Number:ClearAllPoints()
 	self:Update_Name(frame)
 	self:Update_Level(frame)
+	self:Update_Number(frame)
 
 	if not noTargetFrame then
 		self:Update_Elite(frame)
@@ -602,6 +606,7 @@ function NP:OnCreated(frame)
 	unitFrame.CutawayHealth = self:ConstructElement_CutawayHealth(unitFrame)
 	unitFrame.AbsorbBar = self:ConstructElement_AbsorbBar(unitFrame)
 	unitFrame.Level = self:Construct_Level(unitFrame)
+	unitFrame.Number = self:Construct_Number(unitFrame)
 	unitFrame.Name = self:Construct_Name(unitFrame)
 	unitFrame.CastBar = self:Construct_CastBar(unitFrame)
 	unitFrame.Elite = self:Construct_Elite(unitFrame)

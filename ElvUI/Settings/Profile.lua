@@ -426,6 +426,15 @@ P.nameplates = {
 				fontOutline = "OUTLINE",
 				fontSize = 11
 			},
+			number = {
+				enable = true,
+				unitColor = {r=1, g=1, b=1},
+				offsetX = 0,
+				offsetY = 0,
+				font = "PT Sans Narrow",
+				fontOutline = "OUTLINE",
+				fontSize = 11
+			},
 			castbar = {
 				enable = true,
 				width = 150,
@@ -589,6 +598,15 @@ P.nameplates = {
 				fontOutline = "OUTLINE",
 				fontSize = 11
 			},
+			number = {
+				enable = true,
+				unitColor = {r=1, g=1, b=1},
+				offsetX = 0,
+				offsetY = 0,
+				font = "PT Sans Narrow",
+				fontOutline = "OUTLINE",
+				fontSize = 11
+			},
 			castbar = {
 				enable = true,
 				width = 150,
@@ -748,6 +766,15 @@ P.nameplates = {
 			name = {
 				enable = true,
 				abbrev = false,
+				font = "PT Sans Narrow",
+				fontOutline = "OUTLINE",
+				fontSize = 11
+			},
+			number = {
+				enable = true,
+				unitColor = {r=1, g=1, b=1},
+				offsetX = 0,
+				offsetY = 0,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11
@@ -924,6 +951,15 @@ P.nameplates = {
 			name = {
 				enable = true,
 				abbrev = false,
+				font = "PT Sans Narrow",
+				fontOutline = "OUTLINE",
+				fontSize = 11
+			},
+			number = {
+				enable = true,
+				unitColor = {r=1, g=1, b=1},
+				offsetX = 0,
+				offsetY = 0,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11

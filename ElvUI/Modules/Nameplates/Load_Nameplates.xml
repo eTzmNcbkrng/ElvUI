@@ -9,6 +9,7 @@
 	<Script file="Elements\AbsorbBar.lua"/>
 	<Script file="Elements\CutawayHealth.lua"/>
 	<Script file="Elements\Level.lua"/>
+	<Script file="Elements\Number.lua"/>
 	<Script file="Elements\Name.lua"/>
 	<Script file="Elements\RaidIcon.lua"/>
 	<Script file="Elements\HealerIcon.lua"/>
