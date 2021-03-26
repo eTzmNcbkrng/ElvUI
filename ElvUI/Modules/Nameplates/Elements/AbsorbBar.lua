@@ -10,18 +10,18 @@ local _effectTrigger = false; -- in case healthBar.PostUpdate trigger to fast th
 
 ---------------------- EVENTS ----------------------
 function NP:EffectApplied(event, ...)
-    local sourceGUID, sourceName, destGUID, destName, spellId, value, quality, duration = ...
 	_effectTrigger = true;
-    self:UpdateElement_AbsorbBarByGUID(event, destGUID)
+    local sourceGUID, sourceName, destGUID, destName, spellId, value, quality, duration = ...
+    self:UpdateElement_AbsorbBarByGUID(event, destGUID, destName)
 end
 function NP:EffectUpdated(event, ...)
-    local guid, spellId, value, duration = ...
 	_effectTrigger = true;
+    local guid, spellId, value, duration = ...
     self:UpdateElement_AbsorbBarByGUID(event, guid)
 end
 function NP:EffectRemoved(event, ...)
-    local guid, spellId = ...
 	_effectTrigger = true;
+    local guid, spellId = ...
     self:UpdateElement_AbsorbBarByGUID(event, guid)
 end
 --
@@ -33,8 +33,8 @@ end
 ----------------------------------------------------
 
 -- Find Nameplate
-function NP:UpdateElement_AbsorbBarByGUID(event, destGUID)
-    local frame = self:SearchForFrame(destGUID)
+function NP:UpdateElement_AbsorbBarByGUID(event, destGUID, name)
+    local frame = self:SearchForFrame(destGUID, nil, name)
 	if frame then
 		self:Update_AbsorbBar(frame)
 	end
@@ -42,16 +42,17 @@ end
 
 -- Absorb Update
 function NP:Update_AbsorbBar(frame)
-	if not _effectTrigger then return end
-	--if not frame.Health:IsShown() then return end
-	if not self.db.absorbBars then return end
+	if not frame.Health:IsShown() then return end
 
     local absorbBar = frame.AbsorbBar
     local healthBar = frame.Health
 
     local health = frame.oldHealthBar:GetValue()
 	local _, maxHealth = frame.oldHealthBar:GetMinMaxValues()
-	local myCurrentHealAbsorb = LAM.Unit_Total(frame.guid)
+	local myCurrentHealAbsorb = 0
+	if _effectTrigger then
+		myCurrentHealAbsorb = LAM.Unit_Total(frame.guid)
+	end
 	--
     function CompactUnitFrameUtil_UpdateFillBar(self, frame, health, myCurrentHealAbsorb)
 		local totalWidth, totalHeight = frame:GetSize();

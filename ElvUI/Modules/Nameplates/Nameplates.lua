@@ -768,7 +768,6 @@ function NP:SetTargetFrame(frame)
 			NP:PlateFade(frame, NP.db.fadeIn and 1 or 0, frame:GetAlpha(), 1)
 
 			self:Update_Number(frame)
-			self:Update_AbsorbBar(frame)
 
 			self:Update_Highlight(frame)
 			self:Update_CPoints(frame)
@@ -829,6 +828,7 @@ function NP:SetTargetFrame(frame)
 		end
 	end
 
+	self:Update_AbsorbBar(frame) -- test
 	self:Configure_Glow(frame)
 	self:Update_Glow(frame)
 end

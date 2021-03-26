@@ -4545,10 +4545,10 @@ E.Options.args.nameplate = {
 					type = "select",
 					name = L["Glow Texture type"],
 					values = {
-						["type1"] = L["Border Glow Blurred"],
-						["type2"] = L["Border Glow Thin"],
-						["type3"] = L["Border Glow Medium"],
-						["type4"] = L["Border Glow Thick"],
+						["ElvUI GlowBorder"] = L["Border Glow Blurred"],
+						["ElvUI GlowBorderThin"] = L["Border Glow Thin"],
+						["ElvUI GlowBorderMedium"] = L["Border Glow Medium"],
+						["ElvUI GlowBorderThick"] = L["Border Glow Thick"],
 					}
 				},
 				arrowSize = {
