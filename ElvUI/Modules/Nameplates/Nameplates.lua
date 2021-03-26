@@ -539,6 +539,7 @@ function NP:UpdateElement_All(frame, noTargetFrame, filterIgnore)
 		self:Update_HealthColor(frame)
 		self:Update_CastBar(frame, nil, frame.unit)
 		NP:UpdateElement_Auras(frame)
+		self:Update_AbsorbBar(frame)
 	end
 
 	self:Update_RaidIcon(frame)
@@ -546,10 +547,8 @@ function NP:UpdateElement_All(frame, noTargetFrame, filterIgnore)
 
 	frame.Level:ClearAllPoints()
 	frame.Name:ClearAllPoints()
-	frame.Number:ClearAllPoints()
 	self:Update_Name(frame)
 	self:Update_Level(frame)
-	self:Update_Number(frame)
 
 	if not noTargetFrame then
 		self:Update_Elite(frame)
@@ -560,6 +559,7 @@ function NP:UpdateElement_All(frame, noTargetFrame, filterIgnore)
 	end
 
 	self:Update_IconFrame(frame)
+	self:Update_Number(frame)
 
 	if not filterIgnore then
 		self:StyleFilterUpdate(frame, "UpdateElement_All")
@@ -766,6 +766,9 @@ function NP:SetTargetFrame(frame)
 			end
 
 			NP:PlateFade(frame, NP.db.fadeIn and 1 or 0, frame:GetAlpha(), 1)
+
+			self:Update_Number(frame)
+			self:Update_AbsorbBar(frame)
 
 			self:Update_Highlight(frame)
 			self:Update_CPoints(frame)
@@ -1211,6 +1214,7 @@ function NP:TogleTestFrame(unitType)
 		unitFrame.Buffs.forceShow = true
 		unitFrame.Debuffs.forceShow = true
 		unitFrame.DebuffsBig.forceShow = true
+
 		unitFrame.RaidIcon:SetTexture([[Interface\TargetingFrame\UI-RaidTargetingIcons]])
 		SetRaidTargetIconTexture(unitFrame.RaidIcon, random(1, 8))
 		unitFrame.RaidIcon:Show()
@@ -1220,6 +1224,15 @@ function NP:TogleTestFrame(unitType)
 		end
 
 		self:UpdateAllFrame(unitFrame, true, true)
+
+		-- test to show absorb bar on test frame
+		unitFrame.AbsorbBar.overAbsorbGlow:Show()
+		unitFrame.AbsorbBar.totalAbsorb:SetWidth(50)
+		unitFrame.AbsorbBar.totalAbsorb:Show()
+		unitFrame.AbsorbBar.totalAbsorbOverlay:SetWidth(50)
+		unitFrame.AbsorbBar.totalAbsorbOverlay:Show()
+		unitFrame.Number:SetText('1')
+
 	else
 		ElvNP_Test:Hide()
 	end

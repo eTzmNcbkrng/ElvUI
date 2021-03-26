@@ -3,6 +3,7 @@ local NP = E:GetModule("NamePlates")
 local LSM = E.Libs.LSM
 local LAM = E.Libs.LAM
 
+local _effectTrigger = false; -- in case healthBar.PostUpdate trigger to fast the absorb function
 
 --Lua functions
 --WoW API / Variables
@@ -10,14 +11,17 @@ local LAM = E.Libs.LAM
 ---------------------- EVENTS ----------------------
 function NP:EffectApplied(event, ...)
     local sourceGUID, sourceName, destGUID, destName, spellId, value, quality, duration = ...
+	_effectTrigger = true;
     self:UpdateElement_AbsorbBarByGUID(event, destGUID)
 end
 function NP:EffectUpdated(event, ...)
     local guid, spellId, value, duration = ...
+	_effectTrigger = true;
     self:UpdateElement_AbsorbBarByGUID(event, guid)
 end
 function NP:EffectRemoved(event, ...)
     local guid, spellId = ...
+	_effectTrigger = true;
     self:UpdateElement_AbsorbBarByGUID(event, guid)
 end
 --
@@ -32,16 +36,14 @@ end
 function NP:UpdateElement_AbsorbBarByGUID(event, destGUID)
     local frame = self:SearchForFrame(destGUID)
 	if frame then
-		if frame.UnitType ~= "ENEMY_NPC" and not self.GUIDList[destGUID] then
-			self.GUIDList[destGUID] = {name = destName, unitType = frame.UnitType}
-		end
 		self:Update_AbsorbBar(frame)
 	end
 end
 
 -- Absorb Update
 function NP:Update_AbsorbBar(frame)
-	if not frame.Health:IsShown() then return end
+	if not _effectTrigger then return end
+	--if not frame.Health:IsShown() then return end
 	if not self.db.absorbBars then return end
 
     local absorbBar = frame.AbsorbBar
@@ -98,24 +100,26 @@ function NP:Configure_AbsorbBar(frame)
     -- Glowing spark
     frame.AbsorbBar.overAbsorbGlow:SetTexture(LSM:Fetch("background", "AbsorbSpark"))
     frame.AbsorbBar.overAbsorbGlow:SetBlendMode("ADD");
-    frame.AbsorbBar.overAbsorbGlow:SetPoint("RIGHT", healthBar, "RIGHT", 6, 0)
-    frame.AbsorbBar.overAbsorbGlow:SetSize(12, _h)
+    frame.AbsorbBar.overAbsorbGlow:SetPoint("BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -7, 0)
+    frame.AbsorbBar.overAbsorbGlow:SetPoint("TOPLEFT", healthBar, "TOPRIGHT", -7, 0)
+    frame.AbsorbBar.overAbsorbGlow:SetSize(16, _h)
     -- Total absorb
     frame.AbsorbBar.totalAbsorb:SetTexture(LSM:Fetch("statusbar", self.db.statusbar)) -- same bar as health bar
     frame.AbsorbBar.totalAbsorb:SetPoint("LEFT", healthBar:GetStatusBarTexture(), "RIGHT")
     frame.AbsorbBar.totalAbsorb:SetSize(1, _h)
     -- Total absorb overlay
     frame.AbsorbBar.totalAbsorbOverlay:SetHorizTile(true)
-    frame.AbsorbBar.totalAbsorbOverlay:SetTexture(LSM:Fetch("background", "AbsorbOverlay"), "MIRROR")
+    frame.AbsorbBar.totalAbsorbOverlay:SetVertTile(true)
+    frame.AbsorbBar.totalAbsorbOverlay:SetTexture(LSM:Fetch("background", "AbsorbOverlay"), true, true)
     frame.AbsorbBar.totalAbsorbOverlay:SetPoint("LEFT", healthBar:GetStatusBarTexture(), "RIGHT")
     frame.AbsorbBar.totalAbsorbOverlay:SetSize(1, _h)
 
 end
 
-function NP:ConstructElement_AbsorbBar(parent) -- ConstructElement_CutawayHealth
+function NP:ConstructElement_AbsorbBar(parent)
 	local healthBar = parent.Health
 
-	local absorbBar = CreateFrame("Frame", "$parentAbsorbBar", parent) -- cutawayHealth
+	local absorbBar = CreateFrame("Frame", "$parentAbsorbBar", parent)
 	absorbBar:SetAllPoints(healthBar)
 	--absorbBar:SetFrameLevel(healthBar:GetFrameLevel() - 1)
 

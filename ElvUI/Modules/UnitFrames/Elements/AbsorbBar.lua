@@ -105,15 +105,17 @@ function UF:Configure_AbsorbBar(frame)
     -- Glowing spark
     frame.AbsorbBar.overAbsorbGlow:SetTexture(LSM:Fetch("background", "AbsorbSpark"))
     frame.AbsorbBar.overAbsorbGlow:SetBlendMode("ADD");
-    frame.AbsorbBar.overAbsorbGlow:SetPoint("RIGHT", healthBar, "RIGHT", 6, 0)
-    frame.AbsorbBar.overAbsorbGlow:SetSize(12, healthBar.HEIGHT)
+    frame.AbsorbBar.overAbsorbGlow:SetPoint("BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -7, 0)
+    frame.AbsorbBar.overAbsorbGlow:SetPoint("TOPLEFT", healthBar, "TOPRIGHT", -7, 0)
+    frame.AbsorbBar.overAbsorbGlow:SetSize(16, healthBar.HEIGHT)
     -- Total absorb
     frame.AbsorbBar.totalAbsorb:SetTexture(LSM:Fetch("statusbar", self.db.statusbar)) -- same bar as health bar
     frame.AbsorbBar.totalAbsorb:SetPoint("LEFT", healthBar:GetStatusBarTexture(), "RIGHT")
     frame.AbsorbBar.totalAbsorb:SetSize(25, healthBar.HEIGHT)
     -- Total absorb overlay
     frame.AbsorbBar.totalAbsorbOverlay:SetHorizTile(true)
-    frame.AbsorbBar.totalAbsorbOverlay:SetTexture(LSM:Fetch("background", "AbsorbOverlay"), "MIRROR")
+    frame.AbsorbBar.totalAbsorbOverlay:SetVertTile(true)
+    frame.AbsorbBar.totalAbsorbOverlay:SetTexture(LSM:Fetch("background", "AbsorbOverlay"), true, true)
     frame.AbsorbBar.totalAbsorbOverlay:SetPoint("LEFT", healthBar:GetStatusBarTexture(), "RIGHT")
     frame.AbsorbBar.totalAbsorbOverlay:SetSize(25, healthBar.HEIGHT)
 
