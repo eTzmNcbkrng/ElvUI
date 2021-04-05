@@ -42,6 +42,7 @@ end
 
 -- Absorb Update
 function NP:Update_AbsorbBar(frame)
+	if not self.db.absorb then return end
 	if not frame.Health:IsShown() then return end
 
     local absorbBar = frame.AbsorbBar

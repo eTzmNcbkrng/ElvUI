@@ -881,15 +881,8 @@ local function GetOptionsTable_Absorb(updateFunc, groupName, numUnits)
 				order = 2,
 				type = "toggle",
 				name = L["Enable Absorb bar"],
-				desc = L["Enable Absorb bar on player unit"],
+				desc = L["Enable Absorb bar"],
 			},
-			--[[ absorbBar = {
-				order = 3,
-				type = "select",
-				dialogControl = "LSM30_Statusbar",
-				name = L["StatusBar Texture"],
-				values = AceGUIWidgetLSMlists.statusbar
-			}, ]]
 		}
 	}
 

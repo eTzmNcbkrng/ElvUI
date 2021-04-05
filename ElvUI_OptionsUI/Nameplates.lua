@@ -4455,8 +4455,8 @@ E.Options.args.nameplate = {
 							order = 2,
 							type = "toggle",
 							name = L["Enable"],
-							get = function(info) return E.db.nameplates.absorbBars end,
-							set = function(info, value) E.db.nameplates.absorbBars = value end,
+							get = function(info) return E.db.nameplates.absorb end,
+							set = function(info, value) E.db.nameplates.absorb = value end,
 						},
 					}
 				}

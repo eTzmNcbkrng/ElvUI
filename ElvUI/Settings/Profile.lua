@@ -305,7 +305,7 @@ P.nameplates = {
 	cutawayHealthLength = 0.3,
 	cutawayHealthFadeOutTime = 0.6,
 
-	absorbBars = true,
+	absorb = true,
 
 	alwaysShowTargetHealth = true,
 
@@ -1545,7 +1545,6 @@ P.unitframe = {
 			},
 			absorb = {
 				enabled = true,
-				absorbBar = "ElvUI Norm"
 			},
 			fader = {
 				enable = false,
@@ -1792,7 +1791,6 @@ P.unitframe = {
 			},
 			absorb = {
 				enabled = true,
-				absorbBar = "ElvUI Norm"
 			},
 			fader = {
 				enable = true,
@@ -3177,7 +3175,6 @@ P.unitframe = {
 			},
 			absorb = {
 				enabled = true,
-				absorbBar = "ElvUI Norm"
 			},
 			fader = {
 				enable = true,
@@ -3454,7 +3451,6 @@ P.unitframe = {
 			},
 			absorb = {
 				enabled = true,
-				absorbBar = "ElvUI Norm"
 			},
 			fader = {
 				enable = true,
@@ -3667,7 +3663,6 @@ P.unitframe = {
 			},
 			absorb = {
 				enabled = true,
-				absorbBar = "ElvUI Norm"
 			},
 			fader = {
 				enable = true,
