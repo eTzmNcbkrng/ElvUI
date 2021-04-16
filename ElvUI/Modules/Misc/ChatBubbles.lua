@@ -44,24 +44,22 @@ function M:UpdateBubbleBorder()
 			local classColorTable, lowerCaseWord, isFirstWord, rebuiltString, tempWord, wordMatch, classMatch
 
 			for word in gmatch(text, "%s-%S+%s*") do
-				if string.len(word) < 3 then
-					tempWord = gsub(word, "^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$", "%1%2")
-					lowerCaseWord = lower(tempWord)
+				tempWord = gsub(word, "^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$", "%1%2")
+				lowerCaseWord = lower(tempWord)
 
-					classMatch = CH.ClassNames[lowerCaseWord]
-					wordMatch = classMatch and lowerCaseWord
+				classMatch = CH.ClassNames[lowerCaseWord]
+				wordMatch = classMatch and lowerCaseWord
 
-					if wordMatch and not E.global.chat.classColorMentionExcludedNames[wordMatch] then
-						classColorTable = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[classMatch] or RAID_CLASS_COLORS[classMatch]
-						word = gsub(word, gsub(tempWord, "%-", "%%-"), format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
-					end
+				if wordMatch and not E.global.chat.classColorMentionExcludedNames[wordMatch] and string.len(word) < 3 then
+					classColorTable = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[classMatch] or RAID_CLASS_COLORS[classMatch]
+					word = gsub(word, gsub(tempWord, "%-", "%%-"), format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
+				end
 
-					if not isFirstWord then
-						rebuiltString = word
-						isFirstWord = true
-					else
-						rebuiltString = format("%s%s", rebuiltString, word)
-					end
+				if not isFirstWord then
+					rebuiltString = word
+					isFirstWord = true
+				else
+					rebuiltString = format("%s%s", rebuiltString, word)
 				end
 			end
 
