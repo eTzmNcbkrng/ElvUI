@@ -12,12 +12,19 @@ function NP:Update_Number(frame)
 
     local db = self.db.units[frame.UnitType].number
     local number = frame.Number
+    local nbrMembers = GetNumGroupMembers()
+    local inInstance, instanceType = IsInInstance()
+
+    if (IsInInstance and instanceType == "pvp" and db.disablePVP) then return end
+    if (IsInInstance and instanceType == "arena" and db.disableArena) then return end
+    if (IsInInstance and instanceType == "party" and db.disableParty) then return end
+    if (IsInInstance and instanceType == "raid" and db.disableRaid) then return end
 
 	number:ClearAllPoints()
-    number:SetJustifyH("LEFT")
-    number:SetPoint("BOTTOMRIGHT", frame.Health, "TOPRIGHT", db.offsetX, E.Border*2 + db.offsetY)
+    number:SetJustifyH(db.textAlign)
+    number:SetPoint("LEFT", frame.Health, "RIGHT", db.offsetX, db.offsetY)
 
-    for i=1, 5 do
+    for i=1, nbrMembers do
         if UnitIsUnit(frame.unit, "arena"..i) or UnitIsUnit(frame.unit, "party"..i) or UnitIsUnit(frame.unit, "raid"..i)
         or UnitGUID("arena"..i) == frame.guid or UnitGUID("party"..i) == frame.guid or UnitGUID("raid"..i) == frame.guid then
             number:SetText(i)

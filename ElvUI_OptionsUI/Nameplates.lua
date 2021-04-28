@@ -16,7 +16,15 @@ local positionValues = {
 	RIGHT = "RIGHT",
 	TOPLEFT = "TOPLEFT",
 	TOPRIGHT = "TOPRIGHT",
+	TOP = "TOP",
+	BOTTOM = "BOTTOM",
 	CENTER = "CENTER"
+}
+
+local fontJustify = {
+	["LEFT"] = L["LEFT"],
+	["CENTER"] = L["CENTER"],
+	["RIGHT"] = L["RIGHT"]
 }
 
 local raidTargetIcon = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_%s:0|t %s"
@@ -2302,15 +2310,27 @@ local function GetUnitSettings(unit, name)
 						desc = L["What point to anchor to the frame you set to attach to."],
 						values = positionValues
 					},
+					anchorPoint2 = {
+						order = 9,
+						type = "select",
+						name = L["Anchor Point 2"],
+						desc = L["What point to anchor to the frame you set to attach to."],
+						values = positionValues
+					},
+					centerIcon = {
+						order = 10,
+						type = "toggle",
+						name = L["Center Icon Horizontaly"]
+					},
 					iconAnchorPoint = {
-						order = 8,
+						order = 11,
 						type = "select",
 						name = L["Icon Anchor Point"],
 						desc = L["What point to anchor Icon to the frame you set to attach to."],
 						values = positionValues
 					},
 					attachTo = {
-						order = 9,
+						order = 12,
 						type = "select",
 						name = L["Attach To"],
 						values = {
@@ -2318,7 +2338,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					growthX = {
-						order = 10,
+						order = 13,
 						type = "select",
 						name = L["Growth X-Direction"],
 						values = {
@@ -2327,7 +2347,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					growthY = {
-						order = 11,
+						order = 14,
 						type = "select",
 						name = L["Growth Y-Direction"],
 						values = {
@@ -2336,7 +2356,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					cooldownOrientation = {
-						order = 12,
+						order = 15,
 						type = "select",
 						name = L["Cooldown Orientation"],
 						values = {
@@ -2345,12 +2365,12 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					reverseCooldown = {
-						order = 13,
+						order = 16,
 						type = "toggle",
 						name = L["Reverse Cooldown"],
 					},
 					stacks = {
-						order = 14,
+						order = 17,
 						type = "group",
 						name = L["Stack Counter"],
 						guiInline = true,
@@ -2413,7 +2433,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					duration = {
-						order = 15,
+						order = 18,
 						type = "group",
 						name = L["Duration"],
 						guiInline = true,
@@ -2476,7 +2496,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					filtersGroup = {
-						order = 16,
+						order = 19,
 						name = L["FILTERS"],
 						type = "group",
 						guiInline = true,
@@ -2685,15 +2705,27 @@ local function GetUnitSettings(unit, name)
 						desc = L["What point to anchor to the frame you set to attach to."],
 						values = positionValues
 					},
+					anchorPoint2 = {
+						order = 9,
+						type = "select",
+						name = L["Anchor Point 2"],
+						desc = L["What point to anchor to the frame you set to attach to."],
+						values = positionValues
+					},
+					centerIcon = {
+						order = 10,
+						type = "toggle",
+						name = L["Center Icon Horizontaly"]
+					},
 					iconAnchorPoint = {
-						order = 8,
+						order = 11,
 						type = "select",
 						name = L["Icon Anchor Point"],
 						desc = L["What point to anchor Icon to the frame you set to attach to."],
 						values = positionValues
 					},
 					attachTo = {
-						order = 9,
+						order = 12,
 						type = "select",
 						name = L["Attach To"],
 						values = {
@@ -2702,7 +2734,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					growthX = {
-						order = 10,
+						order = 13,
 						type = "select",
 						name = L["Growth X-Direction"],
 						values = {
@@ -2711,7 +2743,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					growthY = {
-						order = 11,
+						order = 14,
 						type = "select",
 						name = L["Growth Y-Direction"],
 						values = {
@@ -2720,7 +2752,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					cooldownOrientation = {
-						order = 12,
+						order = 15,
 						type = "select",
 						name = L["Cooldown Orientation"],
 						values = {
@@ -2729,12 +2761,12 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					reverseCooldown = {
-						order = 13,
+						order = 16,
 						type = "toggle",
 						name = L["Reverse Cooldown"],
 					},
 					stacks = {
-						order = 14,
+						order = 17,
 						type = "group",
 						name = L["Stack Counter"],
 						guiInline = true,
@@ -2797,7 +2829,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					duration = {
-						order = 15,
+						order = 18,
 						type = "group",
 						name = L["Duration"],
 						guiInline = true,
@@ -2860,7 +2892,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					filtersGroup = {
-						order = 16,
+						order = 19,
 						type = "group",
 						name = L["FILTERS"],
 						get = function(info)
@@ -3069,24 +3101,37 @@ local function GetUnitSettings(unit, name)
 						desc = L["What point to anchor to the frame you set to attach to."],
 						values = positionValues
 					},
+					anchorPoint2 = {
+						order = 9,
+						type = "select",
+						name = L["Anchor Point 2"],
+						desc = L["What point to anchor to the frame you set to attach to."],
+						values = positionValues
+					},
+					centerIcon = {
+						order = 10,
+						type = "toggle",
+						name = L["Center Icon Horizontaly"]
+					},
 					iconAnchorPoint = {
-						order = 8,
+						order = 11,
 						type = "select",
 						name = L["Icon Anchor Point"],
 						desc = L["What point to anchor Icon to the frame you set to attach to."],
 						values = positionValues
 					},
 					attachTo = {
-						order = 9,
+						order = 12,
 						type = "select",
 						name = L["Attach To"],
 						values = {
 							["FRAME"] = L["Nameplate"],
 							["BUFFS"] = L["Buffs"],
+							["DEBUFFS"] = L["Debuffs"],
 						}
 					},
 					growthX = {
-						order = 10,
+						order = 13,
 						type = "select",
 						name = L["Growth X-Direction"],
 						values = {
@@ -3095,7 +3140,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					growthY = {
-						order = 11,
+						order = 14,
 						type = "select",
 						name = L["Growth Y-Direction"],
 						values = {
@@ -3104,7 +3149,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					cooldownOrientation = {
-						order = 12,
+						order = 15,
 						type = "select",
 						name = L["Cooldown Orientation"],
 						values = {
@@ -3113,12 +3158,12 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					reverseCooldown = {
-						order = 13,
+						order = 16,
 						type = "toggle",
 						name = L["Reverse Cooldown"],
 					},
 					stacks = {
-						order = 14,
+						order = 17,
 						type = "group",
 						name = L["Stack Counter"],
 						guiInline = true,
@@ -3181,7 +3226,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					duration = {
-						order = 15,
+						order = 18,
 						type = "group",
 						name = L["Duration"],
 						guiInline = true,
@@ -3244,7 +3289,7 @@ local function GetUnitSettings(unit, name)
 						}
 					},
 					filtersGroup = {
-						order = 16,
+						order = 19,
 						type = "group",
 						name = L["FILTERS"],
 						get = function(info)
@@ -3582,32 +3627,37 @@ local function GetUnitSettings(unit, name)
 						type = "toggle",
 						name = L["Enable"]
 					},
-					colorGroup = {
+					instanceTypeGroup = {
 						type = "group",
-						order = 2,
-						name = L["Colors"],
+						order = 3,
+						name = L["Disable in specific instance"],
 						guiInline = true,
-						get = function(info)
-							local t = E.db.nameplates.units[unit].number[info[#info]]
-							local d = P.nameplates.units[unit].number[info[#info]]
-							return t.r, t.g, t.b, d.r, d.g, d.b
-						end,
-						set = function(info, r, g, b)
-							local t = E.db.nameplates.units[unit].number[info[#info]]
-							t.r, t.g, t.b = r, g, b
-							NP:ConfigureAll()
-						end,
 						args = {
-							unitColor = {
-								name = L["Number Color"],
-								type = "color",
+							disablePVP = {
 								order = 1,
-							}
+								type = "toggle",
+								name = L["Battleground"]
+							},
+							disableArena = {
+								order = 2,
+								type = "toggle",
+								name = L["Arena"]
+							},
+							disableParty = {
+								order = 3,
+								type = "toggle",
+								name = L["Party"]
+							},
+							disableRaid = {
+								order = 4,
+								type = "toggle",
+								name = L["Raid"]
+							},
 						}
 					},
 					positionGroup = {
 						type = "group",
-						order = 3,
+						order = 4,
 						name = L["Position"],
 						guiInline = true,
 						get = function(info)
@@ -3632,11 +3682,18 @@ local function GetUnitSettings(unit, name)
 								desc = L["offsetY"],
 								min = -300, max = 300, step = 1
 							},
+							textAlign = {
+								order = 3,
+								type = "select",
+								name = L["Text Align"],
+								desc = L["Set the text alignement."],
+								values = fontJustify
+							}
 						}
 					},
 					fontGroup = {
 						type = "group",
-						order = 4,
+						order = 5,
 						name = L["Fonts"],
 						guiInline = true,
 						get = function(info)

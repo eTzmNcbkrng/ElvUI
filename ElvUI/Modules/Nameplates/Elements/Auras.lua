@@ -24,7 +24,9 @@ local positionValues = {
 	CENTER = "CENTER",
 	RIGHT = "LEFT",
 	TOPLEFT = "BOTTOM",
-	TOPRIGHT = "BOTTOM"
+	TOPRIGHT = "BOTTOM",
+	TOP = "TOP",
+	BOTTOM = "BOTTOM",
 }
 
 local positionValues2 = {
@@ -34,7 +36,9 @@ local positionValues2 = {
 	CENTER = "CENTER",
 	RIGHT = "RIGHT",
 	TOPLEFT = "TOP",
-	TOPRIGHT = "TOP"
+	TOPRIGHT = "TOP",
+	TOP = "TOP",
+	BOTTOM = "BOTTOM",
 }
 
 
@@ -130,7 +134,7 @@ function NP:UpdateElement_Auras(frame)
 			buffs.anchoredIcons = #buffs
 		end
 		-- Grow frame as new icon update to keep them centered
-		if db.anchorPoint == "CENTER" then
+		if db.centerIcon then
 			if buffs.visibleDebuffs == 0 then buffs.visibleBuffs = 1 end
 			buffs:SetWidth(buffs.visibleBuffs * (db.size + db.spacing))
 		end
@@ -147,8 +151,18 @@ function NP:UpdateElement_Auras(frame)
 
 			debuffs.anchoredIcons = #debuffs
 		end
+		-- Used when big debuffs are anchored to debuffs
+		if (debuffs.visibleDebuffs == 0) then
+			debuffs:SetHeight(1)
+			debuffs:ClearAllPoints()
+			debuffs:SetPoint(positionValues[db.anchorPoint], db.attachTo == "DEBUFFS" and frame.Debuffs or db.attachTo == "BUFFS" and frame.Buffs or frame.Health, positionValues2[db.anchorPoint2], db.xOffset, 0)
+		else
+			debuffs:SetHeight(db.numrows * db.size + ((db.numrows - 1) * db.spacing))
+			debuffs:ClearAllPoints()
+			debuffs:SetPoint(positionValues[db.anchorPoint], db.attachTo == "DEBUFFS" and frame.Debuffs or db.attachTo == "BUFFS" and frame.Buffs or frame.Health, positionValues2[db.anchorPoint2], db.xOffset, db.yOffset)
+		end
 		-- Grow frame as new icon update to keep them centered
-		if db.anchorPoint == "CENTER" then
+		if db.centerIcon then
 			if debuffs.visibleDebuffs == 0 then debuffs.visibleDebuffs = 1 end
 			debuffs:SetWidth(debuffs.visibleDebuffs * (db.size + db.spacing))
 		end
@@ -167,7 +181,7 @@ function NP:UpdateElement_Auras(frame)
 			debuffsBig.anchoredIcons = #debuffsBig
 		end
 		-- Grow frame as new icon update to keep them centered
-		if db.anchorPoint == "CENTER" then
+		if db.centerIcon then
 			if debuffsBig.visibleDebuffs == 0 then debuffsBig.visibleDebuffs = 1 end
 			debuffsBig:SetWidth(debuffsBig.visibleDebuffs * (db.size + db.spacing))
 		end
@@ -432,7 +446,7 @@ function NP:Construct_AuraIcon(parent, index)
 	button:SetOrientation("VERTICAL")
 
 	button.bg = button:CreateTexture()
-	button.bg:SetTexture(0, 0, 0, 0) -- alpaha 0.5
+	button.bg:SetTexture(0, 0, 0, 0) -- alpha 0.5
 
 	button.bg:SetPoint("TOPLEFT", button)
 	button.bg:SetPoint("BOTTOMRIGHT", button:GetStatusBarTexture(), "TOPRIGHT")
@@ -478,7 +492,7 @@ function NP:Configure_Auras(frame, auraType)
 	auras:SetWidth(db.perrow * db.size + ((db.perrow - 1) * db.spacing))
 	auras:SetHeight(db.numrows * db.size + ((db.numrows - 1) * db.spacing))
 	auras:ClearAllPoints()
-	auras:SetPoint(positionValues[db.anchorPoint], db.attachTo == "BUFFS" and frame.Buffs or frame.Health, positionValues2[db.anchorPoint], db.xOffset, db.yOffset)
+	auras:SetPoint(positionValues[db.anchorPoint], db.attachTo == "DEBUFFS" and frame.Debuffs or db.attachTo == "BUFFS" and frame.Buffs or frame.Health, positionValues2[db.anchorPoint2], db.xOffset, db.yOffset)
 end
 
 function NP:ConstructElement_Auras(frame, auraType)

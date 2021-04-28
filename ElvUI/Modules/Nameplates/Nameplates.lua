@@ -1322,10 +1322,10 @@ function NP:Initialize()
 	LAI.RegisterCallback(self, "LibAuraInfo_AURA_CLEAR")
 	LAI.RegisterCallback(self, "LibAuraInfo_UNIT_AURA")
 
-	LAM.UnregisterAllCallbacks(self);
-	LAM.RegisterCallback(self, "EffectApplied");
-	LAM.RegisterCallback(self, "EffectUpdated");
-	LAM.RegisterCallback(self, "EffectRemoved");
+	LAM.UnregisterAllCallbacks(NP);
+	LAM.RegisterCallback(NP, "EffectApplied", "AbsorbEffectApplied");
+	LAM.RegisterCallback(NP, "EffectUpdated", "AbsorbEffectUpdated");
+	LAM.RegisterCallback(NP, "EffectRemoved", "AbsorbEffectRemoved");
 
 end
 

@@ -9,15 +9,15 @@ local _effectTrigger = false; -- in case healthBar.PostUpdate trigger to fast th
 --WoW API / Variables
 
 ---------------------- EVENTS ----------------------
-function UF:EffectApplied(event, ...)
+function UF:AbsorbEffectApplied(event, ...)
     local sourceGUID, sourceName, destGUID, destName, spellId, value, quality, duration = ...
     _effectTrigger = true;
 end
-function UF:EffectUpdated(event, ...)
+function UF:AbsorbEffectUpdated(event, ...)
     local guid, spellId, value, duration = ...
 	_effectTrigger = true;
 end
-function UF:EffectRemoved(event, ...)
+function UF:AbsorbEffectRemoved(event, ...)
     local guid, spellId = ...
 	_effectTrigger = true;
 end
