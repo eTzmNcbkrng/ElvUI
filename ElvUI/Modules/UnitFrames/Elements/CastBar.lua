@@ -258,13 +258,13 @@ function UF:Configure_Castbar(frame)
 end
 
 function UF:FuzzyTime(duration, total)
-	local durationH, durationM, durationS, out = 0,0,0
+	local durationH, durationM, durationS, out = 0,0
 
 	if duration > 3599 then
 		durationH = math.floor(duration / 3600)
 		duration = duration % 3600
 	end
-	if duration > 59 then 
+	if duration > 59 then
 		durationM = math.floor(duration / 60)
 		duration = duration % 60
 	end
@@ -315,23 +315,23 @@ function UF:CustomTimeText(duration)
 
 	if self.channeling then
 		if db == "CURRENT" then
-			self.Time:SetFormattedText("%s", FuzzyTime(abs(duration - self.max)))
+			self.Time:SetFormattedText("%s", UF:FuzzyTime(abs(duration - self.max)))
 		elseif db == "CURRENTMAX" then
-			self.Time:SetFormattedText("%s / %s", FuzzyTime(abs(duration - self.max)), FuzzyTime(self.max, true))
+			self.Time:SetFormattedText("%s / %s", UF:FuzzyTime(abs(duration - self.max)), UF:FuzzyTime(self.max, true))
 		elseif db == "REMAINING" then
-			self.Time:SetFormattedText("%s", FuzzyTime(duration))
+			self.Time:SetFormattedText("%s", UF:FuzzyTime(duration))
 		elseif db == "REMAININGMAX" then
-			self.Time:SetFormattedText("%s / %s", FuzzyTime(duration), FuzzyTime(self.max, true))
+			self.Time:SetFormattedText("%s / %s", UF:FuzzyTime(duration), UF:FuzzyTime(self.max, true))
 		end
 	else
 		if db == "CURRENT" then
-			self.Time:SetFormattedText("%s", FuzzyTime(duration))
+			self.Time:SetFormattedText("%s", UF:FuzzyTime(duration))
 		elseif db == "CURRENTMAX" then
-			self.Time:SetFormattedText("%s / %s", FuzzyTime(duration), FuzzyTime(self.max, true))
+			self.Time:SetFormattedText("%s / %s", UF:FuzzyTime(duration), UF:FuzzyTime(self.max, true))
 		elseif db == "REMAINING" then
-			self.Time:SetFormattedText("%s", FuzzyTime(abs(duration - self.max)))
+			self.Time:SetFormattedText("%s", UF:FuzzyTime(abs(duration - self.max)))
 		elseif db == "REMAININGMAX" then
-			self.Time:SetFormattedText("%s / %s", FuzzyTime(math.abs(duration - self.max)), FuzzyTime(self.max, true))
+			self.Time:SetFormattedText("%s / %s", UF:FuzzyTime(math.abs(duration - self.max)), UF:FuzzyTime(self.max, true))
 		end
 	end
 end
