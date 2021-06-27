@@ -3011,9 +3011,50 @@ local function GetUnitSettings(unit, name)
 						type = "toggle",
 						name = L["Enable"]
 					},
+					position = {
+						order = 2,
+						type = "select",
+						name = L["Position"],
+						values = {
+							["TOP"] = "TOP",
+							["LEFT"] = "LEFT",
+							["BOTTOM"] = "BOTTOM",
+							["CENTER"] = "CENTER",
+							["TOPLEFT"] = "TOPLEFT",
+							["BOTTOMLEFT"] = "BOTTOMLEFT",
+							["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+							["RIGHT"] = "RIGHT",
+							["TOPRIGHT"] = "TOPRIGHT"
+						}
+					},
+					parent = {
+						order = 3,
+						type = "select",
+						name = L["Parent"],
+						values = {
+							["Nameplate"] = L["Nameplate"],
+							["Health"] = L["Health"]
+						}
+					},
+					xOffset = {
+						order = 4,
+						name = L["X-Offset"],
+						type = "range",
+						min = -100,
+						max = 100,
+						step = 1
+					},
+					yOffset = {
+						order = 5,
+						name = L["Y-Offset"],
+						type = "range",
+						min = -100,
+						max = 100,
+						step = 1
+					},
 					fontGroup = {
 						type = "group",
-						order = 2,
+						order = 6,
 						name = L["Fonts"],
 						guiInline = true,
 						get = function(info)
@@ -3074,6 +3115,47 @@ local function GetUnitSettings(unit, name)
 						order = 2,
 						type = "toggle",
 						name = L["Abbreviation"]
+					},
+					position = {
+						order = 3,
+						type = "select",
+						name = L["Position"],
+						values = {
+							["TOP"] = "TOP",
+							["LEFT"] = "LEFT",
+							["BOTTOM"] = "BOTTOM",
+							["CENTER"] = "CENTER",
+							["TOPLEFT"] = "TOPLEFT",
+							["BOTTOMLEFT"] = "BOTTOMLEFT",
+							["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+							["RIGHT"] = "RIGHT",
+							["TOPRIGHT"] = "TOPRIGHT"
+						}
+					},
+					parent = {
+						order = 4,
+						type = "select",
+						name = L["Parent"],
+						values = {
+							["Nameplate"] = L["Nameplate"],
+							["Health"] = L["Health"]
+						}
+					},
+					xOffset = {
+						order = 5,
+						name = L["X-Offset"],
+						type = "range",
+						min = -100,
+						max = 100,
+						step = 1
+					},
+					yOffset = {
+						order = 6,
+						name = L["Y-Offset"],
+						type = "range",
+						min = -100,
+						max = 100,
+						step = 1
 					},
 					fontGroup = {
 						type = "group",
@@ -3277,7 +3359,7 @@ local function GetUnitSettings(unit, name)
 					order = 3,
 					type = "range",
 					name = L["Size"],
-					min = 8, max = 48, step = 1,
+					min = 8, max = 60, step = 1,
 				},
 				position = {
 					order = 4,
@@ -4013,7 +4095,7 @@ E.Options.args.nameplate = {
 				},
 				arrowSize = {
 					order = 6,
-					type = 'range',
+					type = "range",
 					name = L["Arrow Size"],
 					min = 1,
 					max = 50,
@@ -4101,7 +4183,7 @@ E.Options.args.nameplate = {
 				arrows = {
 					order = 11,
 					name = L["Arrow Texture"],
-					type = 'multiselect',
+					type = "multiselect",
 					customWidth = 80,
 					get = function(info, key)
 						return E.db.nameplates.units.TARGET.arrow == key
@@ -4190,7 +4272,7 @@ do -- target arrow textures
 	E.Options.args.nameplate.args.targetGroup.args.arrows.values = arrows
 
 	for key, arrow in pairs(E.Media.Arrows) do
-		arrows[key] = E:TextureString(arrow, ':45:45')
+		arrows[key] = E:TextureString(arrow, ":45:45")
 	end
 end
 

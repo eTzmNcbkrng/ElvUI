@@ -122,12 +122,12 @@ P.databars = {
 		hideAtMaxLevel = true,
 		hideInVehicle = false,
 		hideInCombat = false,
+		showBubbles = false,
 		questXP = {
-			color = {r = 0, g = 1, b = 0},
+			color = {r = 0, g = 1, b = 0, a = 0.4},
 			tooltip = true,
 			questCurrentZoneOnly = false,
-			questCompletedOnly = false,
-			showBubbles = false
+			questCompletedOnly = false
 		}
 	},
 	petExperience = {
@@ -142,7 +142,8 @@ P.databars = {
 		orientation = "VERTICAL",
 		hideAtMaxLevel = true,
 		hideInVehicle = false,
-		hideInCombat = false
+		hideInCombat = false,
+		showBubbles = false
 	},
 	reputation = {
 		enable = false,
@@ -155,7 +156,8 @@ P.databars = {
 		mouseover = false,
 		orientation = "VERTICAL",
 		hideInVehicle = false,
-		hideInCombat = false
+		hideInCombat = false,
+		showBubbles = false
 	}
 }
 
@@ -420,12 +422,20 @@ P.nameplates = {
 				enable = true,
 				useClassColor = true,
 				abbrev = false,
+				position = "TOPLEFT",
+				parent = "Health",
+				xOffset = 0,
+				yOffset = 2,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11
 			},
 			level = {
 				enable = false,
+				position = "TOPRIGHT",
+				parent = "Health",
+				xOffset = 0,
+				yOffset = 2,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11
@@ -547,12 +557,20 @@ P.nameplates = {
 				enable = true,
 				useClassColor = true,
 				abbrev = false,
+				position = "TOPLEFT",
+				parent = "Health",
+				xOffset = 0,
+				yOffset = 2,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11
 			},
 			level = {
 				enable = true,
+				position = "TOPRIGHT",
+				parent = "Health",
+				xOffset = 0,
+				yOffset = 2,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11
@@ -680,12 +698,20 @@ P.nameplates = {
 			name = {
 				enable = true,
 				abbrev = false,
+				position = "TOPLEFT",
+				parent = "Health",
+				xOffset = 0,
+				yOffset = 2,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11
 			},
 			level = {
 				enable = true,
+				position = "TOPRIGHT",
+				parent = "Health",
+				xOffset = 0,
+				yOffset = 2,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11
@@ -820,12 +846,20 @@ P.nameplates = {
 			name = {
 				enable = true,
 				abbrev = false,
+				position = "TOPLEFT",
+				parent = "Health",
+				xOffset = 0,
+				yOffset = 2,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11
 			},
 			level = {
 				enable = true,
+				position = "TOPRIGHT",
+				parent = "Health",
+				xOffset = 0,
+				yOffset = 2,
 				font = "PT Sans Narrow",
 				fontOutline = "OUTLINE",
 				fontSize = 11

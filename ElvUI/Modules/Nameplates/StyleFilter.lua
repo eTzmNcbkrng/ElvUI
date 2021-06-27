@@ -161,7 +161,7 @@ local totemTypes = {
 		[58771] = "w4",	-- Mana Spring Totem VI
 		[58773] = "w4",	-- Mana Spring Totem VII
 		[58774] = "w4",	-- Mana Spring Totem VIII
-		[16190] = "w5" 	-- Mana Tide Totem
+		[16190] = "w5"	-- Mana Tide Totem
 	},
 	other = {
 		[724] = "o1"	-- Lightwell
@@ -355,26 +355,29 @@ function mod:StyleFilterSetChanges(frame, actions, HealthColorChanged, BorderCha
 		frame.Name:ClearAllPoints()
 		frame.Name:SetJustifyH("CENTER")
 		frame.Name:SetPoint("TOP", frame)
+		frame.Name:SetParent(frame)
 		if mod.db.units[frame.UnitType].level.enable then
 			frame.Level:ClearAllPoints()
 			frame.Level:SetPoint("LEFT", frame.Name, "RIGHT")
 			frame.Level:SetJustifyH("LEFT")
+			frame.Level:SetParent(frame)
 			frame.Level:SetFormattedText(" [%s]", mod:UnitLevel(frame))
 		end
 		if not NameColorChanged or not IconOnlyChanged then
 			mod:Update_Name(frame, true)
 		end
 	end
-	if IconChanged then
+	if IconChanged and (mod.Totems[frame.UnitName] or mod.UniqueUnits[frame.UnitName]) then
 		frame.StyleChanged = true
 		frame.IconChanged = true
 		mod:Configure_IconFrame(frame)
 		mod:Update_IconFrame(frame)
 	end
-	if IconOnlyChanged then
+	if IconOnlyChanged and (mod.Totems[frame.UnitName] or mod.UniqueUnits[frame.UnitName]) then
 		frame.StyleChanged = true
 		frame.IconOnlyChanged = true
-		mod:Update_IconFrame(frame, true)
+		mod:Configure_IconFrame(frame, true)
+		mod:Update_IconFrame(frame)
 		if frame.CastBar:IsShown() then frame.CastBar:Hide() end
 		if frame.Health:IsShown() then frame.Health:Hide() end
 		frame.Level:SetText()

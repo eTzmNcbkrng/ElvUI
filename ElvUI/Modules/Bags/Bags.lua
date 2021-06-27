@@ -1710,26 +1710,26 @@ end
 function B:CreateSellFrame()
 	B.SellFrame = CreateFrame("Frame", "ElvUIVendorGraysFrame", E.UIParent)
 	B.SellFrame:Size(200, 40)
-	B.SellFrame:Point("CENTER", E.UIParent)
+	B.SellFrame:SetPoint("CENTER")
 	B.SellFrame:CreateBackdrop("Transparent")
 	B.SellFrame:SetAlpha(E.db.bags.vendorGrays.progressBar and 1 or 0)
 	B.SellFrame:Hide()
 
 	B.SellFrame.title = B.SellFrame:CreateFontString(nil, "OVERLAY")
 	B.SellFrame.title:FontTemplate(nil, 12, "OUTLINE")
-	B.SellFrame.title:Point("TOP", B.SellFrame, "TOP", 0, -2)
+	B.SellFrame.title:Point("TOP", 0, -2)
 	B.SellFrame.title:SetText(L["Vendoring Grays"])
 
 	B.SellFrame.statusbar = CreateFrame("StatusBar", "ElvUIVendorGraysFrameStatusbar", B.SellFrame)
 	B.SellFrame.statusbar:Size(180, 16)
-	B.SellFrame.statusbar:Point("BOTTOM", B.SellFrame, "BOTTOM", 0, 4)
+	B.SellFrame.statusbar:Point("BOTTOM", 0, 4)
 	B.SellFrame.statusbar:SetStatusBarTexture(E.media.normTex)
 	B.SellFrame.statusbar:SetStatusBarColor(1, 0, 0)
 	B.SellFrame.statusbar:CreateBackdrop("Transparent")
 
 	B.SellFrame.statusbar.ValueText = B.SellFrame.statusbar:CreateFontString(nil, "OVERLAY")
 	B.SellFrame.statusbar.ValueText:FontTemplate(nil, 12, "OUTLINE")
-	B.SellFrame.statusbar.ValueText:Point("CENTER", B.SellFrame.statusbar)
+	B.SellFrame.statusbar.ValueText:SetPoint("CENTER")
 	B.SellFrame.statusbar.ValueText:SetText("0 / 0 ( 0s )")
 
 	B.SellFrame.Info = {
