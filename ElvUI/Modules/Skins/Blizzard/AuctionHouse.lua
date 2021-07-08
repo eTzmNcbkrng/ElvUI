@@ -9,14 +9,16 @@ local GetAuctionSellItemInfo = GetAuctionSellItemInfo
 local GetItemQualityColor = GetItemQualityColor
 local PlaySound = PlaySound
 local hooksecurefunc = hooksecurefunc
+local IsAddOnLoaded = IsAddOnLoaded
 
 S:AddCallbackForAddon("Blizzard_AuctionUI", "Skin_Blizzard_AuctionUI", function()
 	if not E.private.skins.blizzard.enable or not E.private.skins.blizzard.auctionhouse then return end
 
+	local y = IsAddOnLoaded("TradeSkillMaster_Auctioning") and 0 or 23
 	AuctionFrame:StripTextures(true)
 	AuctionFrame:CreateBackdrop("Transparent")
 	AuctionFrame.backdrop:Point("TOPLEFT", 11, 0)
-	AuctionFrame.backdrop:Point("BOTTOMRIGHT", 0, 23)
+	AuctionFrame.backdrop:Point("BOTTOMRIGHT", 0, y)
 
 	S:HookScript(AuctionFrame, "OnShow", function(self)
 		S:SetUIPanelWindowInfo(self, "xoffset", 0, nil, true)
@@ -106,7 +108,8 @@ S:AddCallbackForAddon("Blizzard_AuctionUI", "Skin_Blizzard_AuctionUI", function(
 		S:HandleTab(tab)
 
 		if i == 1 then
-			tab:Point("TOPLEFT", AuctionFrame, "BOTTOMLEFT", 12, 25)
+			local y = IsAddOnLoaded("TradeSkillMaster_Auctioning") and 2 or -25
+			tab:Point("TOPLEFT", AuctionFrame, "BOTTOMLEFT", 12, y)
 			tab.SetPoint = E.noop
 		else
 			tab:Point("TOPLEFT", _G["AuctionFrameTab"..(i - 1)], "TOPRIGHT", -15, 0)
