@@ -51,6 +51,10 @@ function UF:Construct_RaidFrames()
 	self.customTexts = {}
 	self.InfoPanel = UF:Construct_InfoPanel(self)
 
+	--
+	self.AbsorbBar = UF:Construct_AbsorbBar(self)
+	--
+
 	self.unitframeType = "raid"
 	UF:Update_StatusBars()
 	UF:Update_FontStrings()
@@ -240,6 +244,9 @@ function UF:Update_RaidFrames(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame)
 
 	frame:UpdateAllElements("ForceUpdate")
 end

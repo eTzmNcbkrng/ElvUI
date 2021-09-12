@@ -21,18 +21,24 @@ local positionValues = {
 	BOTTOMLEFT = "TOP",
 	BOTTOMRIGHT = "TOP",
 	LEFT = "RIGHT",
+	CENTER = "CENTER",
 	RIGHT = "LEFT",
 	TOPLEFT = "BOTTOM",
-	TOPRIGHT = "BOTTOM"
+	TOPRIGHT = "BOTTOM",
+	TOP = "TOP",
+	BOTTOM = "BOTTOM",
 }
 
 local positionValues2 = {
 	BOTTOMLEFT = "BOTTOM",
 	BOTTOMRIGHT = "BOTTOM",
 	LEFT = "LEFT",
+	CENTER = "CENTER",
 	RIGHT = "RIGHT",
 	TOPLEFT = "TOP",
-	TOPRIGHT = "TOP"
+	TOPRIGHT = "TOP",
+	TOP = "TOP",
+	BOTTOM = "BOTTOM",
 }
 
 
@@ -49,61 +55,213 @@ local RaidIconBit = {
 
 local ByRaidIcon = {}
 
+------------------------------------------------------------
 function NP:LibAuraInfo_AURA_APPLIED(event, destGUID)
 	self:UpdateElement_AurasByGUID(destGUID, event)
 end
-
 function NP:LibAuraInfo_AURA_REMOVED(event, destGUID)
 	self:UpdateElement_AurasByGUID(destGUID, event)
 end
-
 function NP:LibAuraInfo_AURA_REFRESH(event, destGUID)
 	self:LibAuraInfo_AURA_APPLIED(event, destGUID)
 end
-
 function NP:LibAuraInfo_AURA_APPLIED_DOSE(event, destGUID)
 	self:LibAuraInfo_AURA_APPLIED(event, destGUID)
 end
-
 function NP:LibAuraInfo_AURA_CLEAR(event, destGUID)
 	self:UpdateElement_AurasByGUID(destGUID, event)
 end
-
 function NP:LibAuraInfo_UNIT_AURA(event, destGUID)
 	self:UpdateElement_AurasByGUID(destGUID, event)
 end
+------------------------------------------------------------
 
-function NP:UpdateTime(elapsed)
-	self.timeLeft = self.timeLeft - elapsed
-	self:SetValue(self.timeLeft)
+function NP:UpdateElement_AurasByGUID(guid, event)
+	local destName, destFlags = LAI:GetGUIDInfo(guid)
 
-	if self.nextUpdate > 0 then
-		self.nextUpdate = self.nextUpdate - elapsed
-		return
+	if destName then
+		destName = split("-", destName)
 	end
 
-	if self.timeLeft < 0 then
-		self:SetScript("OnUpdate", nil)
-		self:Hide()
-		return
-	end
-
-	local value, id, nextUpdate, remainder = E:GetTimeInfo(self.timeLeft, self.threshold, self.hhmmThreshold, self.mmssThreshold)
-	self.nextUpdate = nextUpdate
-
-	local style = E.TimeFormats[id]
-	if style then
-		local which = (self.textColors and 2 or 1) + (self.showSeconds and 0 or 2)
-		if self.textColors then
-			self.text:SetFormattedText(style[which], value, self.textColors[id], remainder)
-		else
-			self.text:SetFormattedText(style[which], value, remainder)
+	local raidIcon
+	if destFlags then
+		for iconName, bitmask in pairs(RaidIconBit) do
+			if band(destFlags, bitmask) > 0 then
+				ByRaidIcon[iconName] = guid
+				raidIcon = iconName
+				break
+			end
 		end
 	end
 
-	local color = self.timeColors[id]
-	if color then
-		self.text:SetTextColor(color.r, color.g, color.b)
+	local frame = self:SearchForFrame(guid, raidIcon)
+	if frame then
+		if frame.UnitType ~= "ENEMY_NPC" and not self.GUIDList[guid] then
+			self.GUIDList[guid] = {name = destName, unitType = frame.UnitType}
+		end
+
+		self:UpdateElement_Auras(frame)
+	end
+end
+
+function NP:UpdateElement_Auras(frame)
+	if not frame.Health:IsShown() then return end
+
+	local guid = frame.guid
+	if not guid then
+		if RAID_CLASS_COLORS[frame.UnitClass] then
+			guid = self:GetGUIDByName(frame.UnitName, frame.UnitType)
+		elseif frame.RaidIcon:IsShown() then
+			guid = ByRaidIcon[frame.RaidIconType]
+		end
+
+		if guid then
+			frame.guid = guid
+		elseif not frame.Buffs.forceShow and not frame.Debuffs.forceShow then
+			return
+		end
+	end
+
+	-- buffs
+	local db = NP.db.units[frame.UnitType].buffs
+	if db.enable then
+		local buffs = frame.Buffs
+		buffs.visibleBuffs = NP:UpdateElement_AuraIcons(buffs, guid, buffs.filter or "HELPFUL", db.perrow * db.numrows)
+
+		if #buffs > buffs.anchoredIcons then
+			self:Update_AurasPosition(buffs, db)
+
+			buffs.anchoredIcons = #buffs
+		end
+		-- Grow frame as new icon update to keep them centered
+		if db.centerIcon then
+			if buffs.visibleDebuffs == 0 then buffs.visibleBuffs = 1 end
+			buffs:SetWidth(buffs.visibleBuffs * (db.size + db.spacing))
+		end
+	end
+
+	-- debuffs
+	db = NP.db.units[frame.UnitType].debuffs
+	if db.enable then
+		local debuffs = frame.Debuffs
+		debuffs.visibleDebuffs = NP:UpdateElement_AuraIcons(debuffs, guid, debuffs.filter or "HARMFUL", db.perrow * db.numrows, true)
+
+		if #debuffs > debuffs.anchoredIcons then
+			self:Update_AurasPosition(debuffs, db)
+
+			debuffs.anchoredIcons = #debuffs
+		end
+		-- Used when big debuffs are anchored to debuffs
+		if (debuffs.visibleDebuffs == 0) then
+			debuffs:SetHeight(1)
+			debuffs:ClearAllPoints()
+			debuffs:SetPoint(positionValues[db.anchorPoint], db.attachTo == "DEBUFFS" and frame.Debuffs or db.attachTo == "BUFFS" and frame.Buffs or frame.Health, positionValues2[db.anchorPoint2], db.xOffset, 0)
+		else
+			debuffs:SetHeight(db.numrows * db.size + ((db.numrows - 1) * db.spacing))
+			debuffs:ClearAllPoints()
+			debuffs:SetPoint(positionValues[db.anchorPoint], db.attachTo == "DEBUFFS" and frame.Debuffs or db.attachTo == "BUFFS" and frame.Buffs or frame.Health, positionValues2[db.anchorPoint2], db.xOffset, db.yOffset)
+		end
+		-- Grow frame as new icon update to keep them centered
+		if db.centerIcon then
+			if debuffs.visibleDebuffs == 0 then debuffs.visibleDebuffs = 1 end
+			debuffs:SetWidth(debuffs.visibleDebuffs * (db.size + db.spacing))
+		end
+
+	end
+
+	-- debuffsBig
+	db = NP.db.units[frame.UnitType].debuffsBig
+	if db.enable then
+		local debuffsBig = frame.DebuffsBig
+		debuffsBig.visibleDebuffs = NP:UpdateElement_AuraIcons(debuffsBig, guid, debuffsBig.filter or "HARMFUL", db.perrow * db.numrows, true)
+
+		if #debuffsBig > debuffsBig.anchoredIcons then
+			self:Update_AurasPosition(debuffsBig, db)
+
+			debuffsBig.anchoredIcons = #debuffsBig
+		end
+		-- Grow frame as new icon update to keep them centered
+		if db.centerIcon then
+			if debuffsBig.visibleDebuffs == 0 then debuffsBig.visibleDebuffs = 1 end
+			debuffsBig:SetWidth(debuffsBig.visibleDebuffs * (db.size + db.spacing))
+		end
+	end
+
+	self:StyleFilterUpdate(frame, "UNIT_AURA")
+end
+
+function NP:UpdateElement_AuraIcons(frame, guid, filter, limit, isDebuff)
+	local index, visible, hidden, created = 1, 0, 0, 0
+
+	while visible < limit do
+		local result = NP:SetAura(frame, guid, index, filter, isDebuff, visible)
+		if not result then
+			break
+		elseif result == HIDDEN then
+			hidden = hidden + 1
+		elseif result == VISIBLE then
+			visible = visible + 1
+		elseif result == CREATED then
+			visible = visible + 1
+			created = created + 1
+		end
+		index = index + 1
+	end
+
+	visible = visible - created
+
+	for i = visible + 1, #frame do
+		frame[i].timeLeft = nil
+		frame[i]:SetScript("OnUpdate", nil)
+		frame[i]:Hide()
+	end
+	return visible
+end
+function NP:Update_AurasPosition(frame, db, parentFrame)
+	local size = db.size + db.spacing
+	local anchor = E.InversePoints[db.iconAnchorPoint]
+	local growthx = (db.growthX == "LEFT" and -1) or 1
+	local growthy = (db.growthY == "DOWN" and -1) or 1
+	local cols = db.perrow
+
+
+	for i = frame.anchoredIcons + 1, #frame do
+		local button = frame[i]
+		if not button then break end
+
+		local col = (i - 1) % cols
+		local row = floor((i - 1) / cols)
+
+		button:SetSize(db.size, db.size)
+		button:ClearAllPoints()
+		button:SetPoint(anchor, frame, anchor, col * size * growthx, row * size * growthy)
+
+		button.count:FontTemplate(LSM:Fetch("font", db.countFont), db.countFontSize, db.countFontOutline)
+		button.count:ClearAllPoints()
+		button.count:SetPoint(db.countPosition, db.countXOffset, db.countYOffset)
+
+		button.text:FontTemplate(LSM:Fetch("font", db.durationFont), db.durationFontSize, db.durationFontOutline)
+		button.text:ClearAllPoints()
+		button.text:SetPoint(db.durationPosition, db.durationXOffset, db.durationYOffset)
+
+		button:SetOrientation(db.cooldownOrientation)
+
+		button.bg:ClearAllPoints()
+		if db.cooldownOrientation == "VERTICAL" then
+			button.bg:SetPoint("TOPLEFT", button)
+			button.bg:SetPoint("BOTTOMRIGHT", button:GetStatusBarTexture(), "TOPRIGHT")
+		else
+			button.bg:SetPoint("TOPRIGHT", button)
+			button.bg:SetPoint("BOTTOMLEFT", button:GetStatusBarTexture(), "BOTTOMRIGHT")
+		end
+
+		if db.reverseCooldown then
+			button:SetStatusBarColor(0, 0, 0, 0) -- 0.5
+			button.bg:SetTexture(0, 0, 0, 0)
+		else
+			button:SetStatusBarColor(0, 0, 0, 0)
+			button.bg:SetTexture(0, 0, 0, 0) -- 0.5
+		end
 	end
 end
 
@@ -147,8 +305,8 @@ function NP:SetAura(frame, guid, index, filter, isDebuff, visible)
 					button:SetValue(timeLeft)
 
 					button:SetScript("OnUpdate", NP.UpdateTime)
---				else
---					return HIDDEN
+					-- else
+					-- return HIDDEN
 				end
 			else
 				button.timeLeft = nil
@@ -180,254 +338,40 @@ function NP:SetAura(frame, guid, index, filter, isDebuff, visible)
 		end
 	end
 end
+function NP:UpdateTime(elapsed)
+	self.timeLeft = self.timeLeft - elapsed
+	self:SetValue(self.timeLeft)
 
-function NP:Update_AurasPosition(frame, db)
-	local size = db.size + db.spacing
-	local anchor = E.InversePoints[db.anchorPoint]
-	local growthx = (db.growthX == "LEFT" and -1) or 1
-	local growthy = (db.growthY == "DOWN" and -1) or 1
-	local cols = db.perrow
+	if self.nextUpdate > 0 then
+		self.nextUpdate = self.nextUpdate - elapsed
+		return
+	end
 
-	for i = frame.anchoredIcons + 1, #frame do
-		local button = frame[i]
-		if not button then break end
+	if self.timeLeft < 0 then
+		self:SetScript("OnUpdate", nil)
+		self:Hide()
+		return
+	end
 
-		local col = (i - 1) % cols
-		local row = floor((i - 1) / cols)
+	local value, id, nextUpdate, remainder = E:GetTimeInfo(self.timeLeft, self.threshold, self.hhmmThreshold, self.mmssThreshold)
+	self.nextUpdate = nextUpdate
 
-		button:SetSize(db.size, db.size)
-		button:ClearAllPoints()
-		button:SetPoint(anchor, frame, anchor, col * size * growthx, row * size * growthy)
-
-		button.count:FontTemplate(LSM:Fetch("font", db.countFont), db.countFontSize, db.countFontOutline)
-		button.count:ClearAllPoints()
-		button.count:SetPoint(db.countPosition, db.countXOffset, db.countYOffset)
-
-		button.text:FontTemplate(LSM:Fetch("font", db.durationFont), db.durationFontSize, db.durationFontOutline)
-		button.text:ClearAllPoints()
-		button.text:SetPoint(db.durationPosition, db.durationXOffset, db.durationYOffset)
-
-		button:SetOrientation(db.cooldownOrientation)
-
-		button.bg:ClearAllPoints()
-		if db.cooldownOrientation == "VERTICAL" then
-			button.bg:SetPoint("TOPLEFT", button)
-			button.bg:SetPoint("BOTTOMRIGHT", button:GetStatusBarTexture(), "TOPRIGHT")
+	local style = E.TimeFormats[id]
+	if style then
+		local which = (self.textColors and 2 or 1) + (self.showSeconds and 0 or 2)
+		if self.textColors then
+			self.text:SetFormattedText(style[which], value, self.textColors[id], remainder)
 		else
-			button.bg:SetPoint("TOPRIGHT", button)
-			button.bg:SetPoint("BOTTOMLEFT", button:GetStatusBarTexture(), "BOTTOMRIGHT")
+			self.text:SetFormattedText(style[which], value, remainder)
 		end
+	end
 
-		if db.reverseCooldown then
-			button:SetStatusBarColor(0, 0, 0, 0.5)
-			button.bg:SetTexture(0, 0, 0, 0)
-		else
-			button:SetStatusBarColor(0, 0, 0, 0)
-			button.bg:SetTexture(0, 0, 0, 0.5)
-		end
+	local color = self.timeColors[id]
+	if color then
+		self.text:SetTextColor(color.r, color.g, color.b)
 	end
 end
-
-function NP:UpdateElement_AuraIcons(frame, guid, filter, limit, isDebuff)
-	local index, visible, hidden, created = 1, 0, 0, 0
-
-	while visible < limit do
-		local result = NP:SetAura(frame, guid, index, filter, isDebuff, visible)
-		if not result then
-			break
-		elseif result == HIDDEN then
-			hidden = hidden + 1
-		elseif result == VISIBLE then
-			visible = visible + 1
-		elseif result == CREATED then
-			visible = visible + 1
-			created = created + 1
-		end
-		index = index + 1
-	end
-
-	visible = visible - created
-
-	for i = visible + 1, #frame do
-		frame[i].timeLeft = nil
-		frame[i]:SetScript("OnUpdate", nil)
-		frame[i]:Hide()
-	end
-	return visible
-end
-
-function NP:UpdateElement_Auras(frame)
-	if not frame.Health:IsShown() then return end
-
-	local guid = frame.guid
-	if not guid then
-		if RAID_CLASS_COLORS[frame.UnitClass] then
-			guid = self:GetGUIDByName(frame.UnitName, frame.UnitType)
-		elseif frame.RaidIcon:IsShown() then
-			guid = ByRaidIcon[frame.RaidIconType]
-		end
-
-		if guid then
-			frame.guid = guid
-		elseif not frame.Buffs.forceShow and not frame.Debuffs.forceShow then
-			return
-		end
-	end
-
-	local db = NP.db.units[frame.UnitType].buffs
-	if db.enable then
-		local buffs = frame.Buffs
-		buffs.visibleBuffs = NP:UpdateElement_AuraIcons(buffs, guid, buffs.filter or "HELPFUL", db.perrow * db.numrows)
-
-		if #buffs > buffs.anchoredIcons then
-			self:Update_AurasPosition(buffs, db)
-
-			buffs.anchoredIcons = #buffs
-		end
-	end
-
-	db = NP.db.units[frame.UnitType].debuffs
-	if db.enable then
-		local debuffs = frame.Debuffs
-		debuffs.visibleDebuffs = NP:UpdateElement_AuraIcons(debuffs, guid, debuffs.filter or "HARMFUL", db.perrow * db.numrows, true)
-
-		if #debuffs > debuffs.anchoredIcons then
-			self:Update_AurasPosition(debuffs, db)
-
-			debuffs.anchoredIcons = #debuffs
-		end
-	end
-
-	self:StyleFilterUpdate(frame, "UNIT_AURA")
-end
-
-function NP:UpdateElement_AurasByGUID(guid, event)
-	local destName, destFlags = LAI:GetGUIDInfo(guid)
-
-	if destName then
-		destName = split("-", destName)
-	end
-
-	local raidIcon
-	if destFlags then
-		for iconName, bitmask in pairs(RaidIconBit) do
-			if band(destFlags, bitmask) > 0 then
-				ByRaidIcon[iconName] = guid
-				raidIcon = iconName
-				break
-			end
-		end
-	end
-
-	local frame = self:SearchForFrame(guid, raidIcon)
-	if frame then
-		if frame.UnitType ~= "ENEMY_NPC" and not self.GUIDList[guid] then
-			self.GUIDList[guid] = {name = destName, unitType = frame.UnitType}
-		end
-
-		self:UpdateElement_Auras(frame)
-	end
-end
-
-function NP:Construct_AuraIcon(parent, index)
-	local db = NP.db.units[parent:GetParent().UnitType][parent.type]
-
-	local button = CreateFrame("StatusBar", "$parentButton"..index, parent)
-	NP:StyleFrame(button, true)
-
-	button:SetStatusBarTexture(E.media.blankTex)
-	button:SetStatusBarColor(0, 0, 0, 0)
-	button:SetOrientation("VERTICAL")
-
-	button.bg = button:CreateTexture()
-	button.bg:SetTexture(0, 0, 0, 0.5)
-
-	button.bg:SetPoint("TOPLEFT", button)
-	button.bg:SetPoint("BOTTOMRIGHT", button:GetStatusBarTexture(), "TOPRIGHT")
-
-	button.icon = button:CreateTexture(nil, "BORDER")
-	button.icon:SetTexCoord(unpack(E.TexCoords))
-	button.icon:SetAllPoints()
-
-	button.count = button:CreateFontString(nil, "OVERLAY")
-	button.count:SetJustifyH("RIGHT")
-	button.count:FontTemplate(LSM:Fetch("font", db.countFont), db.countFontSize, db.countFontOutline)
-
-	button.text = button:CreateFontString(nil, "OVERLAY")
-
-	-- support cooldown override
-	if not button.isRegisteredCooldown then
-		button.CooldownOverride = "nameplates"
-		button.isRegisteredCooldown = true
-		button.forceEnabled = true
-
-		if not E.RegisteredCooldowns.nameplates then E.RegisteredCooldowns.nameplates = {} end
-		tinsert(E.RegisteredCooldowns.nameplates, button)
-	end
-
-	button.text:FontTemplate(LSM:Fetch("font", db.durationFont), db.durationFontSize, db.durationFontOutline)
-
-	NP:Update_CooldownOptions(button)
-
-	tinsert(parent, button)
-
-	return button
-end
-
-function NP:Update_CooldownOptions(button)
-	E:Cooldown_Options(button, self.db.cooldown, button)
-end
-
-function NP:Configure_Auras(frame, auraType)
-	local auras = frame[auraType]
-	local db = self.db.units[frame.UnitType][auras.type]
-
-	auras:SetWidth(db.perrow * db.size + ((db.perrow - 1) * db.spacing))
-	auras:SetHeight(db.numrows * db.size + ((db.numrows - 1) * db.spacing))
-	auras:ClearAllPoints()
-	auras:SetPoint(positionValues[db.anchorPoint], db.attachTo == "BUFFS" and frame.Buffs or frame.Health, positionValues2[db.anchorPoint], db.xOffset, db.yOffset)
-end
-
-function NP:ConstructElement_Auras(frame, auraType)
-	local auras = CreateFrame("Frame", "$parent"..auraType, frame)
-	auras:Show()
-	auras:SetSize(150, 27)
-	auras:SetPoint("TOP", 0, 22)
-	auras.anchoredIcons = 0
-	auras.type = string.lower(auraType)
-
-	return auras
-end
-
-function NP:CheckFilter(name, spellID, isPlayer, allowDuration, noDuration, ...)
-	for i = 1, select("#", ...) do
-		local filterName = select(i, ...)
-		if not filterName then return true end
-		if G.nameplates.specialFilters[filterName] or E.global.unitframe.aurafilters[filterName] then
-			local filter = E.global.unitframe.aurafilters[filterName]
-			if filter then
-				local filterType = filter.type
-				local spellList = filter.spells
-				local spell = spellList and (spellList[spellID] or spellList[name])
-
-				if filterType and (filterType == "Whitelist") and (spell and spell.enable) and allowDuration then
-					return true
-				elseif filterType and (filterType == "Blacklist") and (spell and spell.enable) then
-					return false
-				end
-			elseif filterName == "Personal" and isPlayer and allowDuration then
-				return true
-			elseif filterName == "nonPersonal" and (not isPlayer) and allowDuration then
-				return true
-			elseif filterName == "blockNoDuration" and noDuration then
-				return false
-			elseif filterName == "blockNonPersonal" and (not isPlayer) then
-				return false
-			end
-		end
-	end
-end
-
+--
 function NP:AuraFilter(guid, button, name, texture, count, debuffType, duration, expiration, caster, spellID)
 	local parent = button:GetParent()
 	local parentType = parent.type
@@ -461,4 +405,108 @@ function NP:AuraFilter(guid, button, name, texture, count, debuffType, duration,
 	end
 
 	return filterCheck
+end
+function NP:CheckFilter(name, spellID, isPlayer, allowDuration, noDuration, ...)
+	for i = 1, select("#", ...) do
+		local filterName = select(i, ...)
+		if not filterName then return true end
+		if G.nameplates.specialFilters[filterName] or E.global.unitframe.aurafilters[filterName] then
+			local filter = E.global.unitframe.aurafilters[filterName]
+			if filter then
+				local filterType = filter.type
+				local spellList = filter.spells
+				local spell = spellList and (spellList[spellID] or spellList[name])
+
+				if filterType and (filterType == "Whitelist") and (spell and spell.enable) and allowDuration then
+					return true
+				elseif filterType and (filterType == "Blacklist") and (spell and spell.enable) then
+					return false
+				end
+			elseif filterName == "Personal" and isPlayer and allowDuration then
+				return true
+			elseif filterName == "nonPersonal" and (not isPlayer) and allowDuration then
+				return true
+			elseif filterName == "blockNoDuration" and noDuration then
+				return false
+			elseif filterName == "blockNonPersonal" and (not isPlayer) then
+				return false
+			end
+		end
+	end
+end
+
+function NP:Construct_AuraIcon(parent, index)
+	local db = NP.db.units[parent:GetParent().UnitType][parent.type]
+
+	local button = CreateFrame("StatusBar", "$parentButton"..index, parent)
+	NP:StyleFrame(button, true)
+
+	button:SetStatusBarTexture(E.media.blankTex)
+	button:SetStatusBarColor(0, 0, 0, 0)
+	button:SetOrientation("VERTICAL")
+
+	button.bg = button:CreateTexture()
+	button.bg:SetTexture(0, 0, 0, 0) -- alpha 0.5
+
+	button.bg:SetPoint("TOPLEFT", button)
+	button.bg:SetPoint("BOTTOMRIGHT", button:GetStatusBarTexture(), "TOPRIGHT")
+
+	button.icon = button:CreateTexture(nil, "BORDER")
+	button.icon:SetTexCoord(unpack(E.TexCoords))
+	button.icon:SetAllPoints()
+
+	button.count = button:CreateFontString(nil, "OVERLAY")
+	button.count:SetJustifyH("RIGHT")
+	button.count:FontTemplate(LSM:Fetch("font", db.countFont), db.countFontSize, db.countFontOutline)
+
+	button.text = button:CreateFontString(nil, "OVERLAY")
+
+	-- support cooldown override
+	if not button.isRegisteredCooldown then
+		button.CooldownOverride = "nameplates"
+		button.isRegisteredCooldown = true
+		button.forceEnabled = true
+
+		if not E.RegisteredCooldowns.nameplates then E.RegisteredCooldowns.nameplates = {} end
+		tinsert(E.RegisteredCooldowns.nameplates, button)
+	end
+
+	button.text:FontTemplate(LSM:Fetch("font", db.durationFont), db.durationFontSize, db.durationFontOutline)
+
+	NP:Update_CooldownOptions(button)
+
+	tinsert(parent, button)
+
+	return button
+end
+function NP:Update_CooldownOptions(button)
+	E:Cooldown_Options(button, self.db.cooldown, button)
+end
+
+------------------------------------------------------------
+
+function NP:Configure_Auras(frame, auraType)
+	local auras = frame[auraType]
+	local db = self.db.units[frame.UnitType][auras.type]
+
+	auras:SetWidth(db.perrow * db.size + ((db.perrow - 1) * db.spacing))
+	auras:SetHeight(db.numrows * db.size + ((db.numrows - 1) * db.spacing))
+	auras:ClearAllPoints()
+	auras:SetPoint(positionValues[db.anchorPoint], db.attachTo == "DEBUFFS" and frame.Debuffs or db.attachTo == "BUFFS" and frame.Buffs or frame.Health, positionValues2[db.anchorPoint2], db.xOffset, db.yOffset)
+end
+
+function NP:ConstructElement_Auras(frame, auraType)
+	local auras = CreateFrame("Frame", "$parent"..auraType, frame)
+	auras:Show()
+	auras:SetSize(150, 27)
+	auras:SetPoint("TOP", 0, 22)
+	auras.anchoredIcons = 0
+
+	if(auraType == "DebuffsBig") then
+		auras.type = "debuffsBig" -- string.lower make 'B' lower and bug out
+	else
+		auras.type = string.lower(auraType)
+	end
+
+	return auras
 end

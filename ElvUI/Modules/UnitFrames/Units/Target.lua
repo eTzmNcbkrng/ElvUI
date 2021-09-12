@@ -44,6 +44,10 @@ function UF:Construct_TargetFrame(frame)
 	frame:Point("BOTTOMRIGHT", E.UIParent, "BOTTOM", 413, 68)
 	E:CreateMover(frame, frame:GetName().."Mover", L["Target Frame"], nil, nil, nil, "ALL,SOLO", nil, "unitframe,target,generalGroup")
 
+	--
+	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
+	--
+
 	frame.unitframeType = "target"
 end
 
@@ -155,6 +159,9 @@ function UF:Update_TargetFrame(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame)
 
 	E:SetMoverSnapOffset(frame:GetName().."Mover", -(12 + db.castbar.height))
 	frame:UpdateAllElements("ForceUpdate")

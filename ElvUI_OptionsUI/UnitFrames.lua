@@ -553,9 +553,21 @@ local function GetOptionsTable_Auras(auraType, updateFunc, groupName, numUnits)
 							["CENTER"] = "CENTER",
 							["TOPLEFT"] = "TOPLEFT",
 							["BOTTOMLEFT"] = "BOTTOMLEFT",
-							["TOPRIGHT"] = "TOPRIGHT"
+							["TOPRIGHT"] = "TOPRIGHT",
 						}
-					}
+					},
+					durationXOffset = {
+						order = 3,
+						type = "range",
+						name = "Offset X",
+						min = -300, max = 300, step = 1
+					},
+					durationYOffset = {
+						order = 4,
+						type = "range",
+						name = "Offset Y",
+						min = -300, max = 300, step = 1
+					},
 				}
 			},
 			filters = {
@@ -851,6 +863,32 @@ local function GetOptionsTable_Health(isGroupFrame, updateFunc, groupName, numUn
 
 	return config
 end
+
+local function GetOptionsTable_Absorb(updateFunc, groupName, numUnits)
+	local config = {
+		order = 150,
+		type = "group",
+		name = L["Absorb"],
+		get = function(info) return E.db.unitframe.units[groupName].absorb[info[#info]] end,
+		set = function(info, value) E.db.unitframe.units[groupName].absorb[info[#info]] = value updateFunc(UF, groupName, numUnits) end,
+		args = {
+			header = {
+				order = 1,
+				type = "header",
+				name = L["Absorb"]
+			},
+			enabled = {
+				order = 2,
+				type = "toggle",
+				name = L["Enable Absorb bar"],
+				desc = L["Enable Absorb bar"],
+			},
+		}
+	}
+
+	return config
+end
+
 
 local function GetOptionsTable_Power(hasDetatchOption, updateFunc, groupName, numUnits, hasStrataLevel)
 	local config = {
@@ -1423,8 +1461,34 @@ local function GetOptionsTable_Castbar(hasTicks, updateFunc, groupName, numUnits
 				desc = L["Display the castbar inside the information panel, the icon will be displayed outside the main unitframe."],
 				disabled = function() return not E.db.unitframe.units[groupName].infoPanel or not E.db.unitframe.units[groupName].infoPanel.enable end
 			},
-			iconSettings = {
+			showCastbarText = {
 				order = 13,
+				type = "toggle",
+				name = "Show Cast bar Text",
+				desc = "Show Cast bar Text",
+			},
+			showCastbarTime = {
+				order = 14,
+				type = "toggle",
+				name = "Show Cast bar Time",
+				desc = "Show Cast bar Time",
+			},
+			barOffsetX = {
+				order = 15,
+				type = "range",
+				name = "OffsetX",
+				desc = "OffsetX relative to parent",
+				min =-300, max = 300, step = 1
+			},
+			barOffsetY = {
+				order = 16,
+				type = "range",
+				name = "OffsetY",
+				desc = "OffsetY relative to parent",
+				min =-300, max = 300, step = 1
+			},
+			iconSettings = {
+				order = 17,
 				type = "group",
 				name = L["Icon"],
 				guiInline = true,
@@ -1484,7 +1548,7 @@ local function GetOptionsTable_Castbar(hasTicks, updateFunc, groupName, numUnits
 				}
 			},
 			strataAndLevel = {
-				order = 14,
+				order = 18,
 				type = "group",
 				name = L["Strata and Level"],
 				get = function(info) return E.db.unitframe.units[groupName].castbar.strataAndLevel[info[#info]] end,
@@ -1526,7 +1590,7 @@ local function GetOptionsTable_Castbar(hasTicks, updateFunc, groupName, numUnits
 						min = 2, max = 128, step = 1
 					}
 				}
-			}
+			},
 		}
 	}
 
@@ -2846,11 +2910,11 @@ E.Options.args.unitframe = {
 							get = function(info)
 								local t = E.db.unitframe.colors[info[#info]]
 								local d = P.unitframe.colors[info[#info]]
-								return t.r, t.g, t.b, t.a, d.r, d.g, d.b
+								return t.r, t.g, t.b, t.a, d.r, d.g, d.b, d.a
 							end,
-							set = function(info, r, g, b)
+							set = function(info, r, g, b, a)
 								local t = E.db.unitframe.colors[info[#info]]
-								t.r, t.g, t.b = r, g, b
+								t.r, t.g, t.b, t.a = r, g, b, a
 								UF:Update_AllFrames()
 							end,
 							args = {
@@ -2906,8 +2970,29 @@ E.Options.args.unitframe = {
 									name = " ",
 									width = "full"
 								},
+								customhealthbackdropAlpha = {
+									order = 10,
+									type = "toggle",
+									name = L["Custom Backdrop Alpha"],
+									desc = L["Set alpha color of healthbar backdrop"],
+									get = function(info) return E.db.unitframe.colors[info[#info]] end,
+									set = function(info, value) E.db.unitframe.colors[info[#info]] = value UF:Update_AllFrames() end
+								},
+								custombackdropAlpha = {
+									order = 11,
+									type = "color",
+									hasAlpha = true,
+									name = L["Health Color and alpha Backdrop"],
+									disabled = function() return not E.db.unitframe.colors.customhealthbackdropAlpha end
+								},
+								spacer1 = {
+									order = 17,
+									type = "description",
+									name = " ",
+									width = "full"
+								},
 								customhealthbackdrop = {
-									order = 8,
+									order = 18,
 									type = "toggle",
 									name = L["Custom Backdrop"],
 									desc = L["Use the custom backdrop color instead of a multiple of the main color."],
@@ -2915,26 +3000,26 @@ E.Options.args.unitframe = {
 									set = function(info, value) E.db.unitframe.colors[info[#info]] = value UF:Update_AllFrames() end
 								},
 								health_backdrop = {
-									order = 9,
+									order = 19,
 									type = "color",
 									name = L["Health Backdrop"],
 									disabled = function() return not E.db.unitframe.colors.customhealthbackdrop end
 								},
 								spacer2 = {
-									order = 10,
+									order = 20,
 									type = "description",
 									name = " ",
 									width = "full"
 								},
 								useDeadBackdrop = {
-									order = 11,
+									order = 21,
 									type = "toggle",
 									name = L["Use Dead Backdrop"],
 									get = function(info) return E.db.unitframe.colors[info[#info]] end,
 									set = function(info, value) E.db.unitframe.colors[info[#info]] = value UF:Update_AllFrames() end
 								},
 								health_backdrop_dead = {
-									order = 12,
+									order = 22,
 									type = "color",
 									name = L["Custom Dead Backdrop"],
 									desc = L["Use this backdrop color for units that are dead or ghosts."],
@@ -2942,13 +3027,13 @@ E.Options.args.unitframe = {
 									disabled = function() return not E.db.unitframe.colors.useDeadBackdrop end
 								},
 								spacer3 = {
-									order = 13,
+									order = 23,
 									type = "description",
 									name = " ",
 									width = "full"
 								},
 								classbackdrop = {
-									order = 14,
+									order = 24,
 									type = "toggle",
 									name = L["Class Backdrop"],
 									desc = L["Color the health backdrop by class or reaction."],
@@ -2957,7 +3042,7 @@ E.Options.args.unitframe = {
 									disabled = function() return E.db.unitframe.colors.customhealthbackdrop end
 								},
 								healthMultiplier = {
-									order = 15,
+									order = 25,
 									type = "range",
 									name = L["Health Backdrop Multiplier"],
 									min = 0, softMax = 0.75, max = 1, step = .01,
@@ -2966,23 +3051,23 @@ E.Options.args.unitframe = {
 									disabled = function() return E.db.unitframe.colors.customhealthbackdrop end
 								},
 								spacer4 = {
-									order = 16,
+									order = 26,
 									type = "description",
 									name = " ",
 									width = "full"
 								},
 								tapped = {
-									order = 17,
+									order = 27,
 									type = "color",
 									name = L["Tapped"]
 								},
 								health = {
-									order = 18,
+									order = 28,
 									type = "color",
 									name = L["HEALTH"]
 								},
 								disconnected = {
-									order = 19,
+									order = 29,
 									type = "color",
 									name = L["Disconnected"]
 								}
@@ -3454,7 +3539,7 @@ E.Options.args.unitframe = {
 							}
 						},
 						debuffHighlight = {
-							order = 9,
+							order = 10,
 							type = "group",
 							name = L["Debuff Highlighting"],
 							get = function(info)
@@ -3749,6 +3834,7 @@ E.Options.args.unitframe.args.player = {
 		healPredction = GetOptionsTable_HealPrediction(UF.CreateAndUpdateUF, "player"),
 		customText = GetOptionsTable_CustomText(UF.CreateAndUpdateUF, "player"),
 		health = GetOptionsTable_Health(false, UF.CreateAndUpdateUF, "player"),
+		absorb = GetOptionsTable_Absorb(UF.CreateAndUpdateUF, "player"),
 		infoPanel = GetOptionsTable_InformationPanel(UF.CreateAndUpdateUF, "player"),
 		power = GetOptionsTable_Power(true, UF.CreateAndUpdateUF, "player", nil, true),
 		name = GetOptionsTable_Name(UF.CreateAndUpdateUF, "player"),
@@ -4373,6 +4459,7 @@ E.Options.args.unitframe.args.target = {
 		healPredction = GetOptionsTable_HealPrediction(UF.CreateAndUpdateUF, "target"),
 		customText = GetOptionsTable_CustomText(UF.CreateAndUpdateUF, "target"),
 		health = GetOptionsTable_Health(false, UF.CreateAndUpdateUF, "target"),
+		absorb = GetOptionsTable_Absorb(UF.CreateAndUpdateUF, "target"),
 		infoPanel = GetOptionsTable_InformationPanel(UF.CreateAndUpdateUF, "target"),
 		power = GetOptionsTable_Power(true, UF.CreateAndUpdateUF, "target", nil, true),
 		name = GetOptionsTable_Name(UF.CreateAndUpdateUF, "target"),
@@ -6142,6 +6229,7 @@ E.Options.args.unitframe.args.party = {
 			}
 		},
 		health = GetOptionsTable_Health(true, UF.CreateAndUpdateHeaderGroup, "party"),
+		absorb = GetOptionsTable_Absorb(UF.CreateAndUpdateUF, "party"),
 		healPredction = GetOptionsTable_HealPrediction(UF.CreateAndUpdateHeaderGroup, "party"),
 		power = GetOptionsTable_Power(false, UF.CreateAndUpdateHeaderGroup, "party"),
 		infoPanel = GetOptionsTable_InformationPanel(UF.CreateAndUpdateHeaderGroup, "party"),
@@ -6587,6 +6675,7 @@ E.Options.args.unitframe.args.raid = {
 			}
 		},
 		health = GetOptionsTable_Health(true, UF.CreateAndUpdateHeaderGroup, "raid"),
+		absorb = GetOptionsTable_Absorb(UF.CreateAndUpdateUF, "raid"),
 		healPredction = GetOptionsTable_HealPrediction(UF.CreateAndUpdateHeaderGroup, "raid"),
 		power = GetOptionsTable_Power(false, UF.CreateAndUpdateHeaderGroup, "raid"),
 		infoPanel = GetOptionsTable_InformationPanel(UF.CreateAndUpdateHeaderGroup, "raid"),
@@ -7006,6 +7095,7 @@ E.Options.args.unitframe.args.raid40 = {
 			}
 		},
 		health = GetOptionsTable_Health(true, UF.CreateAndUpdateHeaderGroup, "raid40"),
+		absorb = GetOptionsTable_Absorb(UF.CreateAndUpdateUF, "raid40"),
 		healPredction = GetOptionsTable_HealPrediction(UF.CreateAndUpdateHeaderGroup, "raid40"),
 		power = GetOptionsTable_Power(false, UF.CreateAndUpdateHeaderGroup, "raid40"),
 		infoPanel = GetOptionsTable_InformationPanel(UF.CreateAndUpdateHeaderGroup, "raid40"),

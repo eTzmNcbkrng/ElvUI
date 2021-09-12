@@ -200,7 +200,7 @@ function UF:Configure_Castbar(frame)
 
 			castbar:ClearAllPoints()
 			if frame.ORIENTATION ~= "RIGHT" then
-				castbar:Point("BOTTOMRIGHT", castbar.Holder, "BOTTOMRIGHT", -(frame.BORDER+frame.SPACING), frame.BORDER+frame.SPACING)
+				castbar:Point("BOTTOMRIGHT", castbar.Holder, "BOTTOMRIGHT", -(frame.BORDER+frame.SPACING + (db.castbar.barOffsetX or 0)), frame.BORDER+frame.SPACING + (db.castbar.barOffsetY or 0))
 				if not isMoved then
 					castbar.Holder.mover:Point("TOPRIGHT", frame, "BOTTOMRIGHT", 0, -(frame.BORDER - frame.SPACING))
 				end
@@ -242,6 +242,18 @@ function UF:Configure_Castbar(frame)
 				ticks[i]:SetVertexColor(castbar.tickColor.r, castbar.tickColor.g, castbar.tickColor.b, castbar.tickColor.a)
 				ticks[i]:Width(castbar.tickWidth)
 			end
+		end
+
+		-- Show/hide Castbar Text and Time
+		if db.castbar.showCastbarText then
+			castbar.Text:Show()
+		else
+			castbar.Text:Hide()
+		end
+		if db.castbar.showCastbarTime then
+			castbar.Time:Show()
+		else
+			castbar.Time:Hide()
 		end
 
 		castbar.custom_backdrop = UF.db.colors.customcastbarbackdrop and UF.db.colors.castbar_backdrop

@@ -1,6 +1,7 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule("UnitFrames")
 local LSM = E.Libs.LSM
+local LAM = E.Libs.LAM
 UF.LSM = E.Libs.LSM
 
 --Lua functions
@@ -701,7 +702,7 @@ function UF.groupPrototype:Update(frame)
 end
 
 function UF.groupPrototype:AdjustVisibility(frame)
---	if not frame.isForced then
+	--	if not frame.isForced then
 		local numGroups = frame.numGroups
 		for i = 1, #frame.groups do
 			local group = frame.groups[i]
@@ -717,7 +718,7 @@ function UF.groupPrototype:AdjustVisibility(frame)
 				end
 			end
 		end
---	end
+	--	end
 end
 
 function UF.headerPrototype:ClearChildPoints()
@@ -1331,6 +1332,7 @@ function UF:ToggleTransparentStatusBar(isTransparent, statusBar, backdropTex, ad
 			backdropTex:SetAllPoints(statusBar)
 		end
 	end
+
 end
 
 function UF:Initialize()
@@ -1405,9 +1407,18 @@ function UF:Initialize()
 		ORD.MatchBySpellName = true
 	end
 
+	LAM.UnregisterAllCallbacks(UF);
+	LAM.RegisterCallback(UF, "EffectApplied", "AbsorbEffectApplied");
+	LAM.RegisterCallback(UF, "EffectUpdated", "AbsorbEffectUpdated");
+	LAM.RegisterCallback(UF, "EffectRemoved", "AbsorbEffectRemoved");
+
 	self:UpdateRangeCheckSpells()
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB", "UpdateRangeCheckSpells")
 end
+
+------------------------------------------
+
+------------------------------------------
 
 local function InitializeCallback()
 	UF:Initialize()

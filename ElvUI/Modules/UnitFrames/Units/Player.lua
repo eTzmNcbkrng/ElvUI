@@ -60,6 +60,10 @@ function UF:Construct_PlayerFrame(frame)
 	frame:Point("BOTTOMLEFT", E.UIParent, "BOTTOM", -413, 68) --Set to default position
 	E:CreateMover(frame, frame:GetName().."Mover", L["Player Frame"], nil, nil, nil, "ALL,SOLO", nil, "unitframe,player,generalGroup")
 
+	--
+	frame.AbsorbBar = self:Construct_AbsorbBar(frame)
+	--
+
 	frame.unitframeType = "player"
 end
 
@@ -189,6 +193,9 @@ function UF:Update_PlayerFrame(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame)
 
 	E:SetMoverSnapOffset(frame:GetName().."Mover", -(12 + db.castbar.height))
 	frame:UpdateAllElements("ForceUpdate")

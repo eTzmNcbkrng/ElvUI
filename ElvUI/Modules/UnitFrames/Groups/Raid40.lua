@@ -53,6 +53,10 @@ function UF:Construct_Raid40Frames()
 	UF:Update_StatusBars()
 	UF:Update_FontStrings()
 
+	--
+	self.AbsorbBar = UF:Construct_AbsorbBar(self)
+	--
+
 	self.db = UF.db.units.raid40
 	self.PostCreate = UF.Update_Raid40Frames
 
@@ -240,6 +244,9 @@ function UF:Update_Raid40Frames(frame, db)
 
 	--CustomTexts
 	UF:Configure_CustomTexts(frame)
+
+	--Absorb
+	UF:Configure_AbsorbBar(frame)
 
 	frame:UpdateAllElements("ForceUpdate")
 end

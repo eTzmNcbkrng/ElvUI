@@ -23,7 +23,7 @@ end
 function NP:Construct_HealerIcon(frame)
 	local texture = frame:CreateTexture(nil, "OVERLAY")
 	texture:SetPoint("RIGHT", frame.Health, "LEFT", -6, 0)
-	texture:SetSize(40, 40)
+	texture:SetSize(34, 34)
 	texture:SetTexture(E.Media.Textures.Healer)
 	texture:Hide()
 

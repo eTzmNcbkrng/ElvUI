@@ -171,7 +171,7 @@ local function CreateShadow(frame, size)
 	shadow:SetFrameLevel(1)
 	shadow:SetFrameStrata(frame:GetFrameStrata())
 	shadow:SetOutside(frame, size or 3, size or 3)
-	shadow:SetBackdrop({edgeFile = LSM:Fetch("border", "ElvUI GlowBorder"), edgeSize = E:Scale(size or 3)})
+	shadow:SetBackdrop({edgeFile = LSM:Fetch("border", "ElvUI GlowBorderThick"), edgeSize = E:Scale(size or 3)}) -- ElvUI GlowBorder
 	shadow:SetBackdropColor(backdropr, backdropg, backdropb, 0)
 	shadow:SetBackdropBorderColor(borderr, borderg, borderb, 0.9)
 	frame.shadow = shadow

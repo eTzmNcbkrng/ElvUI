@@ -651,6 +651,14 @@ function mod:StyleFilterConditionCheck(frame, filter, trigger)
 		end
 	end
 
+	-- DebuffsBig
+	if frame.DebuffsBig and trigger.debuffsBig and trigger.debuffsBig.names and next(trigger.debuffsBig.names) then
+		local debuffBig = mod:StyleFilterAuraCheck(trigger.debuffsBig.names, frame.DebuffsBig, trigger.debuffsBig.mustHaveAll, trigger.debuffsBig.missing, trigger.debuffsBig.minTimeLeft, trigger.debuffsBig.maxTimeLeft)
+		if debuffBig ~= nil then -- ignore if none are selected
+			if debuffBig then passed = true else return end
+		end
+	end
+
 	-- Totems
 	if frame.UnitName and trigger.totems.enable then
 		local totem = mod.Totems[frame.UnitName]
@@ -802,6 +810,14 @@ function mod:StyleFilterConfigure()
 							mod.StyleFilterTriggerEvents.UNIT_AURA = true
 							break
 				end end end
+
+				if t.debuffsBig and t.debuffsBig.names and next(t.debuffsBig.names) then
+					for _, value in pairs(t.debuffsBig.names) do
+						if value then
+							mod.StyleFilterTriggerEvents.UNIT_AURA = true
+							break
+				end end end
+
 			end
 		end
 	end

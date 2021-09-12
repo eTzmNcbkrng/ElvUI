@@ -112,6 +112,7 @@ function NP:Update_Glow(frame)
 		frame.Shadow:Hide()
 		frame.Spark:Hide()
 	end
+
 end
 
 function NP:Configure_Glow(frame)
@@ -178,6 +179,10 @@ function NP:Configure_Glow(frame)
 		end
 
 		-- Spark / Shadow
+		if self.db.units.TARGET.glowType ~= frame.Shadow.oldGlowType then
+			frame.Shadow.oldGlowType = self.db.units.TARGET.glowType
+			frame.Shadow:SetBackdrop({edgeFile = LSM:Fetch("border", self.db.units.TARGET.glowType), edgeSize = E:Scale(6)})
+		end
 		frame.Shadow:SetBackdropBorderColor(r, g, b)
 		frame.Shadow:SetAlpha(a)
 
@@ -197,6 +202,7 @@ function NP:Configure_Glow(frame)
 			end
 		end
 	end
+
 end
 
 local Textures = {"Spark", "TopIndicator", "LeftIndicator", "RightIndicator"}
@@ -204,7 +210,8 @@ local Textures = {"Spark", "TopIndicator", "LeftIndicator", "RightIndicator"}
 function NP:Construct_Glow(frame)
 	frame.Shadow = CreateFrame("Frame", "$parentGlow", frame)
 	frame.Shadow:SetFrameLevel(frame.Health:GetFrameLevel() - 1)
-	frame.Shadow:SetBackdrop({edgeFile = LSM:Fetch("border", "ElvUI GlowBorder"), edgeSize = E:Scale(6)})
+	frame.Shadow.oldGlowType = self.db.units.TARGET.glowType -- used to test later if he changed the glow type
+	frame.Shadow:SetBackdrop({edgeFile = LSM:Fetch("border", self.db.units.TARGET.glowType), edgeSize = E:Scale(6)})
 	frame.Shadow:Hide()
 
 	for _, object in ipairs(Textures) do

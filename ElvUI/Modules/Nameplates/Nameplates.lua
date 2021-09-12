@@ -2,6 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 local NP = E:GetModule("NamePlates")
 --local LSM = E.Libs.LSM
 local LAI = E.Libs.LAI
+local LAM = E.Libs.LAM
 
 --Lua functions
 local _G = _G
@@ -114,6 +115,7 @@ function NP:SetPlateFrameLevel(frame, level, isTarget)
 		frame.Shadow:SetFrameLevel(frame:GetFrameLevel()-1)
 		frame.Buffs:SetFrameLevel(level+1)
 		frame.Debuffs:SetFrameLevel(level+1)
+		frame.DebuffsBig:SetFrameLevel(level+1)
 	end
 end
 
@@ -365,13 +367,16 @@ function NP:OnShow(isConfig, dontHideHighlight)
 
 		NP:Configure_Level(frame)
 		NP:Configure_Name(frame)
+		NP:Configure_Number(frame)
 
 		NP:Configure_Auras(frame, "Buffs")
 		NP:Configure_Auras(frame, "Debuffs")
+		NP:Configure_Auras(frame, "DebuffsBig")
 
 		if NP.db.units[unitType].health.enable or NP.db.alwaysShowTargetHealth then
 			NP:Configure_HealthBar(frame, true)
 			NP:Configure_CastBar(frame, true)
+			NP:Configure_AbsorbBar(frame)
 		end
 
 		NP:Configure_Glow(frame)
@@ -418,9 +423,16 @@ function NP:OnHide(isConfig, dontHideHighlight)
 		frame.Debuffs[i]:Hide()
 	end
 
+	for i = 1, #frame.DebuffsBig do
+		frame.DebuffsBig[i]:SetScript("OnUpdate", nil)
+		frame.DebuffsBig[i].timeLeft = nil
+		frame.DebuffsBig[i]:Hide()
+	end
+
 	if isConfig then
 		frame.Buffs.anchoredIcons = 0
 		frame.Debuffs.anchoredIcons = 0
+		frame.DebuffsBig.anchoredIcons = 0
 	end
 
 	NP:StyleFilterClear(frame)
@@ -469,6 +481,13 @@ function NP:OnHide(isConfig, dontHideHighlight)
 	frame.RaidIconType = nil
 	frame.ThreatScale = nil
 	frame.ThreatStatus = nil
+
+	frame.AbsorbBar.overAbsorbGlow:Hide()
+	frame.AbsorbBar.totalAbsorb:SetWidth(0)
+	frame.AbsorbBar.totalAbsorb:Hide()
+	frame.AbsorbBar.totalAbsorbOverlay:SetWidth(0)
+	frame.AbsorbBar.totalAbsorbOverlay:Hide()
+	frame.Number:SetText()
 
 	if not dontHideHighlight then
 		frame.oldHighlight:Hide()
@@ -520,6 +539,7 @@ function NP:UpdateElement_All(frame, noTargetFrame, filterIgnore)
 		self:Update_HealthColor(frame)
 		self:Update_CastBar(frame, nil, frame.unit)
 		NP:UpdateElement_Auras(frame)
+		self:Update_AbsorbBar(frame)
 	end
 
 	self:Update_RaidIcon(frame)
@@ -539,6 +559,7 @@ function NP:UpdateElement_All(frame, noTargetFrame, filterIgnore)
 	end
 
 	self:Update_IconFrame(frame)
+	self:Update_Number(frame)
 
 	if not filterIgnore then
 		self:StyleFilterUpdate(frame, "UpdateElement_All")
@@ -583,12 +604,15 @@ function NP:OnCreated(frame)
 	unitFrame.Health = self:Construct_HealthBar(unitFrame)
 	unitFrame.Health.Highlight = self:Construct_Highlight(unitFrame)
 	unitFrame.CutawayHealth = self:ConstructElement_CutawayHealth(unitFrame)
+	unitFrame.AbsorbBar = self:ConstructElement_AbsorbBar(unitFrame)
 	unitFrame.Level = self:Construct_Level(unitFrame)
+	unitFrame.Number = self:Construct_Number(unitFrame)
 	unitFrame.Name = self:Construct_Name(unitFrame)
 	unitFrame.CastBar = self:Construct_CastBar(unitFrame)
 	unitFrame.Elite = self:Construct_Elite(unitFrame)
 	unitFrame.Buffs = self:ConstructElement_Auras(unitFrame, "Buffs")
 	unitFrame.Debuffs = self:ConstructElement_Auras(unitFrame, "Debuffs")
+	unitFrame.DebuffsBig = self:ConstructElement_Auras(unitFrame, "DebuffsBig")
 	unitFrame.HealerIcon = self:Construct_HealerIcon(unitFrame)
 	unitFrame.CPoints = self:Construct_CPoints(unitFrame)
 	unitFrame.IconFrame = self:Construct_IconFrame(unitFrame)
@@ -743,6 +767,8 @@ function NP:SetTargetFrame(frame)
 
 			NP:PlateFade(frame, NP.db.fadeIn and 1 or 0, frame:GetAlpha(), 1)
 
+			self:Update_Number(frame)
+
 			self:Update_Highlight(frame)
 			self:Update_CPoints(frame)
 			self:StyleFilterUpdate(frame, "PLAYER_TARGET_CHANGED")
@@ -802,6 +828,7 @@ function NP:SetTargetFrame(frame)
 		end
 	end
 
+	self:Update_AbsorbBar(frame) -- test
 	self:Configure_Glow(frame)
 	self:Update_Glow(frame)
 end
@@ -1186,6 +1213,8 @@ function NP:TogleTestFrame(unitType)
 		unitFrame.oldLevel:SetText(E.mylevel)
 		unitFrame.Buffs.forceShow = true
 		unitFrame.Debuffs.forceShow = true
+		unitFrame.DebuffsBig.forceShow = true
+
 		unitFrame.RaidIcon:SetTexture([[Interface\TargetingFrame\UI-RaidTargetingIcons]])
 		SetRaidTargetIconTexture(unitFrame.RaidIcon, random(1, 8))
 		unitFrame.RaidIcon:Show()
@@ -1195,6 +1224,15 @@ function NP:TogleTestFrame(unitType)
 		end
 
 		self:UpdateAllFrame(unitFrame, true, true)
+
+		-- test to show absorb bar on test frame
+		unitFrame.AbsorbBar.overAbsorbGlow:Show()
+		unitFrame.AbsorbBar.totalAbsorb:SetWidth(50)
+		unitFrame.AbsorbBar.totalAbsorb:Show()
+		unitFrame.AbsorbBar.totalAbsorbOverlay:SetWidth(50)
+		unitFrame.AbsorbBar.totalAbsorbOverlay:Show()
+		unitFrame.Number:SetText('1')
+
 	else
 		ElvNP_Test:Hide()
 	end
@@ -1283,6 +1321,12 @@ function NP:Initialize()
 	LAI.RegisterCallback(self, "LibAuraInfo_AURA_APPLIED_DOSE")
 	LAI.RegisterCallback(self, "LibAuraInfo_AURA_CLEAR")
 	LAI.RegisterCallback(self, "LibAuraInfo_UNIT_AURA")
+
+	LAM.UnregisterAllCallbacks(NP);
+	LAM.RegisterCallback(NP, "EffectApplied", "AbsorbEffectApplied");
+	LAM.RegisterCallback(NP, "EffectUpdated", "AbsorbEffectUpdated");
+	LAM.RegisterCallback(NP, "EffectRemoved", "AbsorbEffectRemoved");
+
 end
 
 local function InitializeCallback()

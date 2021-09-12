@@ -44,7 +44,6 @@ function UF:Construct_PartyFrames()
 
 		self.Power = UF:Construct_PowerBar(self, true, true, "LEFT")
 		self.Power.frequentUpdates = false
-
 		self.Portrait3D = UF:Construct_Portrait(self, "model")
 		self.Portrait2D = UF:Construct_Portrait(self, "texture")
 		self.InfoPanel = UF:Construct_InfoPanel(self)
@@ -67,6 +66,10 @@ function UF:Construct_PartyFrames()
 		self.customTexts = {}
 
 		self.Castbar = UF:Construct_Castbar(self)
+
+		--
+		self.AbsorbBar = UF:Construct_AbsorbBar(self)
+		--
 
 		self.unitframeType = "party"
 	end
@@ -276,6 +279,9 @@ function UF:Update_PartyFrames(frame, db)
 		UF:Configure_ReadyCheckIcon(frame)
 
 		UF:Configure_CustomTexts(frame)
+
+		--Absorb
+		UF:Configure_AbsorbBar(frame)
 	end
 
 	--Fader
