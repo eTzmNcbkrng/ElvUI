@@ -315,6 +315,7 @@ P.nameplates = {
 	cutawayHealthFadeOutTime = 0.6,
 
 	absorb = true,
+	healPrediction = true,
 
 	alwaysShowTargetHealth = true,
 
@@ -342,7 +343,12 @@ P.nameplates = {
 			[3] = {r = .65, g = .63, b = .35},
 			[4] = {r = .65, g = .63, b = .35},
 			[5] = {r = .33, g = .59, b = .33}
-		}
+		},
+		healPrediction = {
+			personal = {r = 0, g = 1, b = 0.5, a = 0.25},
+			others = {r = 0, g = 1, b = 0, a = 0.25},
+			maxOverflow = 0
+		},
 	},
 	cooldown = {
 		override = true,

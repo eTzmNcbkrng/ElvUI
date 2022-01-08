@@ -2,6 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 local NP = E:GetModule("NamePlates")
 local LSM = E.Libs.LSM
 local LAM = E.Libs.LAM
+--[[ local LSA = E.Libs.LSA ]]
 
 local _effectTrigger = false; -- in case healthBar.PostUpdate trigger to fast the absorb function
 
@@ -24,6 +25,11 @@ function NP:AbsorbEffectRemoved(event, ...)
     local guid, spellId = ...
     self:UpdateElement_AbsorbBarByGUID(event, guid)
 end
+--[[ function NP:AbsorbEffectUnitAbsorbed(event, ...)
+	_effectTrigger = true;
+	local guid, spellId, value = ...
+	self:UpdateElement_AbsorbBarByGUID(event, guid)
+end ]]
 --
 function NP:AbsorbBar_HealthValueChangeCallback(frame, health, maxHealth)
     local event = "AbsorbBar_HealthValueChangeCallback"

@@ -4493,6 +4493,46 @@ E.Options.args.nameplate = {
 							guiInline = true,
 							args = {}
 						},
+						healPrediction = {
+							order = 6,
+							type = "group",
+							name = L["Heal Prediction"],
+							guiInline = true,
+							get = function(info)
+								local t = E.db.nameplates.colors.healPrediction[info[#info]]
+								local d = P.nameplates.colors.healPrediction[info[#info]]
+								return t.r, t.g, t.b, t.a, d.r, d.g, d.b, d.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = E.db.nameplates.colors.healPrediction[info[#info]]
+								t.r, t.g, t.b, t.a = r, g, b, a
+								NP:ConfigureAll()
+							end,
+							args = {
+								personal = {
+									order = 2,
+									type = "color",
+									name = L["Personal"],
+									hasAlpha = true
+								},
+								others = {
+									order = 3,
+									type = "color",
+									name = L["Others"],
+									hasAlpha = true
+								},
+								maxOverflow = {
+									order = 4,
+									type = "range",
+									name = L["Max Overflow"],
+									desc = L["Max amount of overflow allowed to extend past the end of the health bar."],
+									isPercent = true,
+									min = 0, max = 1, step = 0.01,
+									get = function(info) return E.db.nameplates.colors.healPrediction.maxOverflow end,
+									set = function(info, value) E.db.nameplates.colors.healPrediction.maxOverflow = value NP:ConfigureAll() end
+								}
+							}
+						},
 					}
 				},
 				threatGroup = {
@@ -4597,6 +4637,32 @@ E.Options.args.nameplate = {
 							get = function(info) return E.db.nameplates.absorb end,
 							set = function(info, value) E.db.nameplates.absorb = value end,
 						},
+					}
+				},
+				HealPredictionGroup = {
+					order = 15,
+					type = "group",
+					name = L["Heal Prediction"],
+					args = {
+						header = {
+							order = 1,
+							type = "header",
+							name = L["Heal Prediction"]
+						},
+						enabled = {
+							order = 2,
+							type = "toggle",
+							name = L["Enable"],
+							get = function(info) return E.db.nameplates.healPrediction end,
+							set = function(info, value) E.db.nameplates.healPrediction = value end,
+						},
+						colors = {
+							order = 3,
+							type = "execute",
+							name = L["COLORS"],
+							func = function() ACD:SelectGroup("ElvUI", "nameplate", "generalGroup", "colorsGroup", "healPrediction") end,
+							disabled = function() return not E.NamePlates.Initialized end
+						}
 					}
 				}
 			}

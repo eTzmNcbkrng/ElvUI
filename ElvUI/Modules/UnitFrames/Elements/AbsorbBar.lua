@@ -2,6 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 local UF = E:GetModule("UnitFrames")
 local LSM = E.Libs.LSM
 local LAM = E.Libs.LAM
+--[[ local LSA = E.Libs.LSA ]]
 
 local _effectTrigger = false; -- in case healthBar.PostUpdate trigger to fast the absorb function
 
@@ -21,6 +22,10 @@ function UF:AbsorbEffectRemoved(event, ...)
     local guid, spellId = ...
 	_effectTrigger = true;
 end
+--[[ function UF:AbsorbEffectUnitAbsorbed(event, ...)
+    local guid, spellId = ...
+	_effectTrigger = true;
+end ]]
 ----------------------------------------------------
 
 -- Absorb Update everytime health change

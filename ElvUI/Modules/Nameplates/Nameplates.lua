@@ -3,6 +3,8 @@ local NP = E:GetModule("NamePlates")
 --local LSM = E.Libs.LSM
 local LAI = E.Libs.LAI
 local LAM = E.Libs.LAM
+--[[ local LSA = E.Libs.LSA ]]
+local LHC = E.Libs.LHC
 
 --Lua functions
 local _G = _G
@@ -377,6 +379,7 @@ function NP:OnShow(isConfig, dontHideHighlight)
 			NP:Configure_HealthBar(frame, true)
 			NP:Configure_CastBar(frame, true)
 			NP:Configure_AbsorbBar(frame)
+			NP:Configure_HealPredictionBar(frame)
 		end
 
 		NP:Configure_Glow(frame)
@@ -482,6 +485,8 @@ function NP:OnHide(isConfig, dontHideHighlight)
 	frame.ThreatScale = nil
 	frame.ThreatStatus = nil
 
+	frame.HealPredictionBar.totalHealPrediction:SetWidth(0)
+	frame.HealPredictionBar.totalHealPrediction:Hide()
 	frame.AbsorbBar.overAbsorbGlow:Hide()
 	frame.AbsorbBar.totalAbsorb:SetWidth(0)
 	frame.AbsorbBar.totalAbsorb:Hide()
@@ -540,6 +545,7 @@ function NP:UpdateElement_All(frame, noTargetFrame, filterIgnore)
 		self:Update_CastBar(frame, nil, frame.unit)
 		NP:UpdateElement_Auras(frame)
 		self:Update_AbsorbBar(frame)
+		self:Update_HealPredictionBar(frame)
 	end
 
 	self:Update_RaidIcon(frame)
@@ -605,6 +611,7 @@ function NP:OnCreated(frame)
 	unitFrame.Health.Highlight = self:Construct_Highlight(unitFrame)
 	unitFrame.CutawayHealth = self:ConstructElement_CutawayHealth(unitFrame)
 	unitFrame.AbsorbBar = self:ConstructElement_AbsorbBar(unitFrame)
+	unitFrame.HealPredictionBar = self:ConstructElement_HealPredictionBar(unitFrame)
 	unitFrame.Level = self:Construct_Level(unitFrame)
 	unitFrame.Number = self:Construct_Number(unitFrame)
 	unitFrame.Name = self:Construct_Name(unitFrame)
@@ -828,7 +835,9 @@ function NP:SetTargetFrame(frame)
 		end
 	end
 
-	self:Update_AbsorbBar(frame) -- test
+	self:Update_AbsorbBar(frame)
+	self:Update_HealPredictionBar(frame)
+
 	self:Configure_Glow(frame)
 	self:Update_Glow(frame)
 end
@@ -1326,6 +1335,20 @@ function NP:Initialize()
 	LAM.RegisterCallback(NP, "EffectApplied", "AbsorbEffectApplied");
 	LAM.RegisterCallback(NP, "EffectUpdated", "AbsorbEffectUpdated");
 	LAM.RegisterCallback(NP, "EffectRemoved", "AbsorbEffectRemoved");
+
+	--[[ LSA.UnregisterAllCallbacks(NP);
+	LSA.RegisterCallback(NP, "EffectApplied", "AbsorbEffectApplied");
+	LSA.RegisterCallback(NP, "EffectUpdated", "AbsorbEffectUpdated");
+	LSA.RegisterCallback(NP, "EffectRemoved", "AbsorbEffectRemoved");
+	LSA.RegisterCallback(NP, "UnitAbsorbed",  "AbsorbEffectUnitAbsorbed"); ]]
+
+	LHC.UnregisterAllCallbacks(NP);
+	LHC.RegisterCallback(NP, "HealComm_HealStarted", "LHC_Heal_Update")
+	LHC.RegisterCallback(NP, "HealComm_HealUpdated", "LHC_Heal_Update")
+	LHC.RegisterCallback(NP, "HealComm_HealDelayed", "LHC_Heal_Update")
+	LHC.RegisterCallback(NP, "HealComm_HealStopped", "LHC_Heal_Update")
+	LHC.RegisterCallback(NP, "HealComm_ModifierChanged", "LHC_Heal_Update")
+	LHC.RegisterCallback(NP, "HealComm_GUIDDisappeared", "LHC_Heal_Update")
 
 end
 

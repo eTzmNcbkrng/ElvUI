@@ -61,6 +61,8 @@ do
 	AddOn:AddLib("EP", "LibElvUIPlugin-1.0")
 	AddOn:AddLib("LSM", "LibSharedMedia-3.0")
 	AddOn:AddLib("LAM", "AbsorbsMonitor-1.0")
+	AddOn:AddLib("LHC", "LibHealComm-4.0")
+	--[[ AddOn:AddLib("LSA", "SpecializedAbsorbs-1.0") ]]
 	AddOn:AddLib("ACL", "AceLocale-3.0-ElvUI")
 	AddOn:AddLib("LAB", "LibActionButton-1.0-ElvUI")
 	AddOn:AddLib("LAI", "LibAuraInfo-1.0-ElvUI", true)
