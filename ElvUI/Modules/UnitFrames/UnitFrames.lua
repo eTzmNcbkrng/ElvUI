@@ -2,6 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...)); --Import: Engine, Locales, Private
 local UF = E:GetModule("UnitFrames")
 local LSM = E.Libs.LSM
 local LAM = E.Libs.LAM
+--[[ local LSA = E.Libs.LSA ]]
 UF.LSM = E.Libs.LSM
 
 --Lua functions
@@ -1411,6 +1412,12 @@ function UF:Initialize()
 	LAM.RegisterCallback(UF, "EffectApplied", "AbsorbEffectApplied");
 	LAM.RegisterCallback(UF, "EffectUpdated", "AbsorbEffectUpdated");
 	LAM.RegisterCallback(UF, "EffectRemoved", "AbsorbEffectRemoved");
+
+	--[[ LSA.UnregisterAllCallbacks(UF);
+	LSA.RegisterCallback(UF, "EffectApplied", "AbsorbEffectApplied");
+	LSA.RegisterCallback(UF, "EffectUpdated", "AbsorbEffectUpdated");
+	LSA.RegisterCallback(UF, "EffectRemoved", "AbsorbEffectRemoved");
+	LSA.RegisterCallback(UF, "UnitAbsorbed",  "AbsorbEffectUnitAbsorbed"); ]]
 
 	self:UpdateRangeCheckSpells()
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB", "UpdateRangeCheckSpells")

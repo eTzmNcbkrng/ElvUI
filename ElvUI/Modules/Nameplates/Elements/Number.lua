@@ -9,6 +9,7 @@ function NP:Update_Number(frame)
 	if not self.db.units[frame.UnitType] and self.db.units[frame.UnitType].number or not self.db.units[frame.UnitType].number.enable then return end
 	if not frame.unit then return end
 	if not UnitIsPlayer(frame.unit) then return end
+    if not frame.Health:IsShown() then return end
 
     local db = self.db.units[frame.UnitType].number
     local number = frame.Number
