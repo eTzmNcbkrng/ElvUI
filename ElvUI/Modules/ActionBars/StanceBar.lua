@@ -4,7 +4,7 @@ local AB = E:GetModule("ActionBars")
 --Lua functions
 local _G = _G
 local ceil = math.ceil
-local format, gsub, match = string.format, string.gsub, string.match
+local find, format, gsub, match = string.find, string.format, string.gsub, string.match
 --WoW API / Variables
 local CooldownFrame_SetTimer = CooldownFrame_SetTimer
 local CreateFrame = CreateFrame
@@ -109,11 +109,25 @@ function AB:PositionAndSizeBarShapeShift()
 	local point = self.db.stanceBar.point
 	local widthMult = self.db.stanceBar.widthMult
 	local heightMult = self.db.stanceBar.heightMult
-	if bar.mover then
-		bar.mover.positionOverride = point
-		E:UpdatePositionOverride(bar.mover:GetName())
+
+	--Now that we have set positionOverride for mover, convert "TOP" or "BOTTOM" to anchor points we can use
+	local position = E:GetScreenQuadrant(bar)
+	if find(position, "LEFT") or position == "TOP" or position == "BOTTOM" then
+		if point == "TOP" then
+			point = "TOPLEFT"
+		elseif point == "BOTTOM" then
+			point = "BOTTOMLEFT"
+		end
+	else
+		if point == "TOP" then
+			point = "TOPRIGHT"
+		elseif point == "BOTTOM" then
+			point = "BOTTOMRIGHT"
+		end
 	end
+
 	bar.db = self.db.stanceBar
+	bar.db.position = nil --Depreciated
 	bar.mouseover = self.db.stanceBar.mouseover
 
 	if bar.LastButton and numButtons > bar.LastButton then
@@ -237,10 +251,14 @@ function AB:PositionAndSizeBarShapeShift()
 			button:SetAlpha(bar.db.alpha)
 		end
 
-		self:StyleButton(button, nil, self.LBFGroup and E.private.actionbar.lbf.enable or nil)
+		self:StyleButton(button, nil, (self.LBFGroup or self.MSQGroup) and E.private.actionbar.lbf.enable or nil)
 	end
 
-	if self.LBFGroup and E.private.actionbar.lbf.enable then self.LBFGroup:Skin(E.private.actionbar.lbf.skin) end
+	if self.LBFGroup and E.private.actionbar.lbf.enable then
+		self.LBFGroup:Skin(E.private.actionbar.lbf.skin)
+	elseif self.MSQGroup and E.private.actionbar.lbf.enable then
+		self.MSQGroup:ReSkin()
+	end
 end
 
 function AB:AdjustMaxStanceButtons(event)
@@ -264,8 +282,8 @@ function AB:AdjustMaxStanceButtons(event)
 		if not bar.buttons[i] then
 			bar.buttons[i] = CreateFrame("CheckButton", format(bar:GetName().."Button%d", i), bar, "ShapeshiftButtonTemplate")
 			bar.buttons[i]:SetID(i)
-			if self.LBFGroup and E.private.actionbar.lbf.enable then
-				self.LBFGroup:AddButton(bar.buttons[i])
+			if (self.LBFGroup or self.MSQGroup) and E.private.actionbar.lbf.enable then
+				(self.LBFGroup or self.MSQGroup):AddButton(bar.buttons[i])
 			end
 			self:HookScript(bar.buttons[i], "OnEnter", "Button_OnEnter")
 			self:HookScript(bar.buttons[i], "OnLeave", "Button_OnLeave")
